@@ -1,0 +1,162 @@
+[
+ {
+  "directory": "/home/alex/CODING/OMAT/bluai/c_client",
+  "arguments": [
+   "gcc",
+   "-Wall",
+   "-g",
+   "-O2",
+   "-c",
+   "-o",
+   "srcs/main.o",
+   "srcs/main.c",
+   "-I./includes",
+   "-I./apis/wifiscan"
+  ],
+  "file": "srcs/main.c"
+ },
+ {
+  "directory": "/home/alex/CODING/OMAT/bluai/c_client",
+  "arguments": [
+   "gcc",
+   "-Wall",
+   "-g",
+   "-O2",
+   "-c",
+   "-o",
+   "srcs/threads/ble_scanthread.o",
+   "srcs/threads/ble_scanthread.c",
+   "-I./includes",
+   "-I./apis/wifiscan"
+  ],
+  "file": "srcs/threads/ble_scanthread.c"
+ },
+ {
+  "directory": "/home/alex/CODING/OMAT/bluai/c_client",
+  "arguments": [
+   "gcc",
+   "-Wall",
+   "-g",
+   "-O2",
+   "-c",
+   "-o",
+   "srcs/threads/bt_senddatathread.o",
+   "srcs/threads/bt_senddatathread.c",
+   "-I./includes",
+   "-I./apis/wifiscan"
+  ],
+  "file": "srcs/threads/bt_senddatathread.c"
+ },
+ {
+  "directory": "/home/alex/CODING/OMAT/bluai/c_client",
+  "arguments": [
+   "gcc",
+   "-Wall",
+   "-g",
+   "-O2",
+   "-c",
+   "-o",
+   "srcs/threads/lst_cleanerthread.o",
+   "srcs/threads/lst_cleanerthread.c",
+   "-I./includes",
+   "-I./apis/wifiscan"
+  ],
+  "file": "srcs/threads/lst_cleanerthread.c"
+ },
+ {
+  "directory": "/home/alex/CODING/OMAT/bluai/c_client",
+  "arguments": [
+   "gcc",
+   "-Wall",
+   "-g",
+   "-O2",
+   "-c",
+   "-o",
+   "srcs/threads/wifi_scanthread.o",
+   "srcs/threads/wifi_scanthread.c",
+   "-I./includes",
+   "-I./apis/wifiscan"
+  ],
+  "file": "srcs/threads/wifi_scanthread.c"
+ },
+ {
+  "directory": "/home/alex/CODING/OMAT/bluai/c_client",
+  "arguments": [
+   "gcc",
+   "-Wall",
+   "-g",
+   "-O2",
+   "-c",
+   "-o",
+   "srcs/threads/wifi_senddatathread.o",
+   "srcs/threads/wifi_senddatathread.c",
+   "-I./includes",
+   "-I./apis/wifiscan"
+  ],
+  "file": "srcs/threads/wifi_senddatathread.c"
+ },
+ {
+  "directory": "/home/alex/CODING/OMAT/bluai/c_client",
+  "arguments": [
+   "gcc",
+   "-Wall",
+   "-g",
+   "-O2",
+   "-c",
+   "-o",
+   "srcs/utils/datastructs.o",
+   "srcs/utils/datastructs.c",
+   "-I./includes",
+   "-I./apis/wifiscan"
+  ],
+  "file": "srcs/utils/datastructs.c"
+ },
+ {
+  "directory": "/home/alex/CODING/OMAT/bluai/c_client",
+  "arguments": [
+   "gcc",
+   "-Wall",
+   "-g",
+   "-O2",
+   "-c",
+   "-o",
+   "srcs/utils/thread_utils.o",
+   "srcs/utils/thread_utils.c",
+   "-I./includes",
+   "-I./apis/wifiscan"
+  ],
+  "file": "srcs/utils/thread_utils.c"
+ },
+ {
+  "directory": "/home/alex/CODING/OMAT/bluai/c_client",
+  "arguments": [
+   "gcc",
+   "-Wall",
+   "-g",
+   "-O2",
+   "-c",
+   "-o",
+   "srcs/utils/wifi_utils.o",
+   "srcs/utils/wifi_utils.c",
+   "-I./includes",
+   "-I./apis/wifiscan"
+  ],
+  "file": "srcs/utils/wifi_utils.c"
+ },
+ {
+  "directory": "/home/alex/CODING/OMAT/bluai/c_client",
+  "arguments": [
+   "gcc",
+   "-Wall",
+   "-g",
+   "-O2",
+   "-c",
+   "-o",
+   "apis/wifiscan/wifi_scan_api.o",
+   "apis/wifiscan/wifi_scan_api.c",
+   "-I./includes",
+   "-I./apis/wifiscan"
+  ],
+  "file": "apis/wifiscan/wifi_scan_api.c"
+ }
+]

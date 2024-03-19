@@ -1,0 +1,2 @@
+- [ ] Add classic scan also! for other thread!
+- [ ] Extract other data from the ble advertisment data!
