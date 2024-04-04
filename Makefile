@@ -19,6 +19,10 @@ clean:
 	@echo "\033[0;31mCleaning...\033[0m"
 	@rm -f $(NAME) $(OBJS)
 
+fclean:
+	@echo "\033[0;31m F Cleaning...\033[0m"
+	@rm -f $(NAME) $(OBJS)
+
 re: clean all
 
 install-deps:

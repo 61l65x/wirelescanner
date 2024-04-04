@@ -1,4 +1,4 @@
-# Bluscanner
+# Wirelescanner
 ## Works on the raspberrys to !
 Bluai is a C multi-threaded program designed to perform various Bluetooth-related tasks concurrently. It's divided into three main threads:
 
