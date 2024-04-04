@@ -41,7 +41,7 @@ int bt_add_device_lst(t_ScannerContext *ctx, const char *mac_addr, int8_t rssi)
         return -1;
     }
     strcpy(new_device->mac_addr, mac_addr);
-    new_device->last_seen_time_ms = timeval_to_ms(&ctx->timeVal);
+    new_device->last_seen_time_ms = timeval_to_ms();
     new_device->rssi = rssi;
     new_device->next = ctx->bt_devices;
     ctx->bt_devices = new_device;

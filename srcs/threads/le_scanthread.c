@@ -26,7 +26,7 @@ static void	add_update_device(t_ScannerContext *ctx, const char *mac_addr,
 		if (strcmp(current->mac_addr, mac_addr) == 0)
 		{
 			current->rssi = rssi;
-			current->last_seen_time_ms = timeval_to_ms(&ctx->timeVal);
+			current->last_seen_time_ms = timeval_to_ms();
 			device_found = 1;
 			break ;
 		}
@@ -122,7 +122,8 @@ void	*ble_scan_data_parser(void *arg)
 	int							len;
 	uint8_t						reports_count;
 	void						*offset;
-					char mac_addr[18];
+	char						mac_addr[18];
+	int8_t						rssi;
 
 	ctx = (t_ScannerContext *)arg;
 	// Set BLE scan parameters.
@@ -172,8 +173,8 @@ void	*ble_scan_data_parser(void *arg)
 					info = (le_advertising_info *)offset;
 					// Print MAC address and RSSI
 					ba2str(&(info->bdaddr), mac_addr);
-					int8_t rssi = (int8_t) * (info->data + info->length);
-						// Assuming RSSI is at the end
+					rssi = (int8_t) * (info->data + info->length);
+					// Assuming RSSI is at the end
 					print_device_info(mac_addr, rssi, info->data, info->length);
 					add_update_device(ctx, mac_addr, rssi);
 					offset = (uint8_t *)offset + sizeof(le_advertising_info)
