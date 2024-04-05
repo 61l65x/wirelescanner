@@ -1,11 +1,6 @@
 
 #include "mainheader.h"
 
-/**
- * @brief Gets current time & returns it in milliseconds.
- * @param tv The timeval to convert.
- * @return The timeval in milliseconds.
- */
 long long	timeval_to_ms(void)
 {
 	struct timeval	tv;
@@ -14,10 +9,6 @@ long long	timeval_to_ms(void)
 	return (long long)(tv.tv_sec) * 1000LL + (tv.tv_usec / 1000);
 }
 
-/**
- * @brief Checks the terminate flag across all threads
- * if set returns 1, else 0.
- */
 int	pthreads_check_terminate_flag(t_ScannerContext *ctx)
 {
 	int	flag;
@@ -30,10 +21,6 @@ int	pthreads_check_terminate_flag(t_ScannerContext *ctx)
 	return (flag);
 }
 
-/**
- * @brief Sets the terminate flag across all threads
- * for exiting the threads.
- */
 void	pthreads_set_terminate_flag(t_ScannerContext *ctx)
 {
 	if (ctx == NULL)

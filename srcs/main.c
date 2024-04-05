@@ -14,12 +14,6 @@ static int	init_bt_hci(t_ScannerContext *ctx)
 	return (0);
 }
 
-/**
- * @brief Initializes the pthreads and mutexes.
- * wifi only if the wifi_scan_on flag is set.
- * @param t The thread structure.
- * @param ctx The scanner context.
- */
 static int	init_pthreads(t_AllThreads *t, t_ScannerContext *ctx)
 {
 	if (pthread_mutex_init(&ctx->ble_data_mutex, NULL) != 0
@@ -50,10 +44,8 @@ static int	handle_arguments(int ac, char **av, t_ScannerContext *ctx)
 	return (0);
 }
 
-// Cleans up the program
 static void	cleanup(t_ScannerContext *ctx, t_AllThreads *threads)
 {
-	// Wait for all threads to finish || to terminate.
 	pthread_join(threads->ble_scan_thread, NULL);
 	pthread_join(threads->dev_lst_monitor_thread, NULL);
 	pthread_join(threads->ble_send_thread, NULL);

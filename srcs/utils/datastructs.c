@@ -1,11 +1,5 @@
 #include "mainheader.h"
 
-/**
- * @brief Adds a device to the wifi device list.
- * add to begin so dont have to loop to end fast
- * @param ctx The scanner context.
- * @param bss The bss info of the device.
-*/
 int wifi_add_device_lst(t_ScannerContext *ctx, struct bss_info *bss)
 {
     WifiDeviceInfo *new_device = calloc(1, sizeof(WifiDeviceInfo));
@@ -25,13 +19,6 @@ int wifi_add_device_lst(t_ScannerContext *ctx, struct bss_info *bss)
     return 0;
 }
 
-/**
- * @brief Adds a device to the bluetooth device list.
- * add to begin so dont have to loop to end fast
- * @param ctx The scanner context.
- * @param mac_addr The mac address of the device.
- * @param rssi The rssi of the device.
-*/
 int bt_add_device_lst(t_ScannerContext *ctx, const char *mac_addr, int8_t rssi)
 {
     BleDeviceInfo *new_device = calloc(1, sizeof(BleDeviceInfo));
@@ -50,12 +37,6 @@ int bt_add_device_lst(t_ScannerContext *ctx, const char *mac_addr, int8_t rssi)
 }
 
 
-/**
- * @brief Generalized function to remove a device from wifi or bluetooth list.
- * @param ctx The scanner context.
- * @param device_to_remove The device to remove.
- * @param type The type of the device to remove.
-*/
 void remove_device_lst(t_ScannerContext *ctx, void *device_to_remove, t_structype type)
 {
     if (type == BLE_INFO)
@@ -102,13 +83,6 @@ void remove_device_lst(t_ScannerContext *ctx, void *device_to_remove, t_structyp
     }
 }
 
-
-/**
- * @brief Frees the list of dynamic allocated devices
- * either bluetooth or wifi struct.
- * @param ctx The scanner context.
- * @param free_wifi 0 for bluetooth, 1 for wifi.
-*/
 void free_devices_lst(t_ScannerContext *ctx,  t_structype type)
 {
     if (type == BLE_INFO)
