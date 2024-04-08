@@ -91,7 +91,7 @@ void	remove_device_lst(t_state *ctx, void *device_to_remove,
 	}
 }
 
-void	free_devices_lst(t_state *ctx, t_structype type)
+void	clear_lst(t_state *ctx, t_structype type)
 {
 	t_le_scan_dev_info	*current;
 		t_le_scan_dev_info *next;

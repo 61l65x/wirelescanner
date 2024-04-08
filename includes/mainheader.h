@@ -91,9 +91,11 @@ typedef struct s_state
 {
 	t_le_scan_dev_info			*le_scanned_devices;
 	t_wifi_dev_info				*wifi_scanned_devices;
-	char						wifi_iface[16];
+	t_hci_dev_data				*hci_devices;
+	int							num_hci_devices;
 	int							wifi_num_devices;
 	bool						wifi_data_updated;
+	char						wifi_iface[16];
 	bool						wifi_scan_on;
 	int							bt_num_devices;
 	int							bt_dev_fd;
@@ -107,6 +109,7 @@ typedef struct s_state
 
 extern _Atomic bool g_terminate_flag;
 
+void							init_signals(t_state *state);
 // data structures
 int								wifi_add_device_lst(t_state *ctx,
 									struct bss_info *bss);
@@ -114,8 +117,7 @@ int								le_add_scanned_dev_to_lst(t_state *ctx,
 									const char *mac_addr, int8_t rssi);
 void							remove_device_lst(t_state *ctx,
 									void *device_to_remove, t_structype type);
-void							free_devices_lst(t_state *ctx,
-									t_structype type);
+void							clear_lst(t_state *ctx, t_structype type);
 
 // thread utils
 void							pthreads_set_terminate_flag(t_state *ctx);

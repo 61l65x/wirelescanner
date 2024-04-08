@@ -21,8 +21,8 @@ static int	init_pthreads(t_thread_ids *t, t_state *ctx)
 		return (1);
 	if (pthread_create(&t->le_scan_thread, NULL, le_scan_thread, ctx) != 0
 		|| pthread_create(&t->dev_lst_monitor_thread, NULL, dev_lst_monitor,
-			ctx) != 0 )
-			//|| pthread_create(&t->le_send_thread, NULL, le_send_thread,ctx) != 0)
+			ctx) != 0)
+		//|| pthread_create(&t->le_send_thread, NULL, le_send_thread,ctx) != 0)
 		return (1);
 	if (ctx->wifi_scan_on)
 	{
@@ -56,32 +56,31 @@ static void	cleanup(t_state *ctx, t_thread_ids *threads)
 		pthread_join(threads->wifi_send_thread, NULL);
 		pthread_join(threads->wifi_scan_thread, NULL);
 		pthread_mutex_destroy(&ctx->wifi_data_mutex);
-		free_devices_lst(ctx, WIFI_INFO);
+		clear_lst(ctx, WIFI_INFO);
 	}
-	free_devices_lst(ctx, LE_INFO);
+	clear_lst(ctx, LE_INFO);
 	hci_close_dev(ctx->bt_dev_fd);
 }
 
 int	main(int ac, char **av)
 {
-	t_state			ctx;
-	t_thread_ids	t;
+	t_state			state;
+	t_thread_ids	threads;
 
-	ctx = (t_state){0};
-	t = (t_thread_ids){0};
-	handle_arguments(ac, av, &ctx);
-	if (init_bt_hci(&ctx) != 0)
-	{
+	state = (t_state){0};
+	threads = (t_thread_ids){0};
+	init_signals(&state);
+	handle_arguments(ac, av, &state);
+	if (init_bt_hci(&state) != 0)
 		return (perror(BT_HCI_ERR_MSG), EXIT_FAILURE);
-	}
-	if (ctx.wifi_scan_on)
+	if (state.wifi_scan_on)
 	{
-		if (get_active_network_interface(ctx.wifi_iface,
-				sizeof(ctx.wifi_iface)) != 0)
+		if (get_active_network_interface(state.wifi_iface,
+				sizeof(state.wifi_iface)) != 0)
 			perror(NTWRK_IFACE_ERR_MSG);
 	}
-	if (init_pthreads(&t, &ctx) != 0)
+	if (init_pthreads(&threads, &state) != 0)
 		perror(PTHREAD_ERR_MSG);
-	cleanup(&ctx, &t);
+	cleanup(&state, &threads);
 	return (0);
 }
