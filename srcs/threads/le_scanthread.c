@@ -1,6 +1,6 @@
 #include "mainheader.h"
 
-int	ble_hci_request(t_ScannerContext *ctx, uint16_t ocf, int clen, void *cparam)
+int	ble_hci_request(t_state *ctx, uint16_t ocf, int clen, void *cparam)
 {
 	struct hci_request	rq;
 
@@ -14,14 +14,13 @@ int	ble_hci_request(t_ScannerContext *ctx, uint16_t ocf, int clen, void *cparam)
 	return (hci_send_req(ctx->bt_dev_fd, &rq, 1000));
 }
 
-static void	add_update_device(t_ScannerContext *ctx, const char *mac_addr,
-		int8_t rssi)
+static void	add_update_device(t_state *ctx, const char *mac_addr, int8_t rssi)
 {
 	int	device_found;
 
 	pthread_mutex_lock(&ctx->ble_data_mutex);
 	device_found = 0;
-	for (BleDeviceInfo *current = ctx->bt_devices; current != NULL; current = current->next)
+	for (t_le_scan_dev_info *current = ctx->le_scanned_devices; current != NULL; current = current->next)
 	{
 		if (strcmp(current->mac_addr, mac_addr) == 0)
 		{
@@ -33,7 +32,7 @@ static void	add_update_device(t_ScannerContext *ctx, const char *mac_addr,
 	}
 	if (!device_found)
 	{
-		if (bt_add_device_lst(ctx, mac_addr, rssi) < 0)
+		if (le_add_scanned_dev_to_lst(ctx, mac_addr, rssi) < 0)
 			pthreads_set_terminate_flag(ctx);
 	}
 	pthread_mutex_unlock(&ctx->ble_data_mutex);
@@ -108,9 +107,9 @@ void	print_device_info(const char *mac, int rssi, const uint8_t *data,
 	printf("\n");
 }
 
-void	*ble_scan_data_parser(void *arg)
+void	*le_scan_thread(void *arg)
 {
-	t_ScannerContext			*ctx;
+	t_state						*ctx;
 	le_set_scan_parameters_cp	scan_params_cp;
 	le_set_event_mask_cp		event_mask_cp;
 	int							i;
@@ -125,7 +124,7 @@ void	*ble_scan_data_parser(void *arg)
 	char						mac_addr[18];
 	int8_t						rssi;
 
-	ctx = (t_ScannerContext *)arg;
+	ctx = (t_state *)arg;
 	// Set BLE scan parameters.
 	memset(&scan_params_cp, 0, sizeof(scan_params_cp));
 	scan_params_cp.type = 0x00;

@@ -28,12 +28,12 @@ static size_t	write_callback(char *ptr, size_t size, size_t nmemb,
 	return (size * nmemb);
 }
 
-void	*bt_senddata(void *arg)
+void	*le_send_thread(void *arg)
 {
-	t_ScannerContext	*ctx;
-	CURL				*curl;
+	t_state	*ctx;
+	CURL	*curl;
 
-	ctx = (t_ScannerContext *)arg;
+	ctx = (t_state *)arg;
 	curl = curl_easy_init();
 	// curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
 	curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_callback);
@@ -42,7 +42,7 @@ void	*bt_senddata(void *arg)
 	while (!pthreads_check_terminate_flag(ctx))
 	{
 		pthread_mutex_lock(&ctx->ble_data_mutex);
-		for (BleDeviceInfo *current = ctx->bt_devices; current != NULL; current = current->next)
+		for (t_le_scan_dev_info *current = ctx->le_scanned_devices; current != NULL; current = current->next)
 		{
 			pthread_mutex_unlock(&ctx->ble_data_mutex);
 			if (send_data_post(curl, current->mac_addr, current->rssi,

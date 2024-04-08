@@ -2,7 +2,7 @@ NAME=btscanner
 CFLAGS = -Wall -g -O2 
 LIBS = `pkg-config --cflags libcurl --libs libcurl bluez` -lbluetooth -lpthread -lmnl
 INCLUDES = -I./includes -I./apis/wifiscan
-SRCS = $(wildcard srcs/main.c srcs/threads/*.c srcs/utils/*.c apis/*/*.c) 
+SRCS = $(shell find srcs -name "*.c" && find apis -name "*.c")
 OBJS = $(SRCS:.c=.o)
 
 all: $(NAME)

@@ -8,14 +8,14 @@
  */
 void	*dev_lst_monitor(void *arg)
 {
-	t_ScannerContext	*ctx;
-	BleDeviceInfo		*bt_current;
-	BleDeviceInfo		*bt_next;
-	WifiDeviceInfo		*wifi_current;
-	WifiDeviceInfo		*wifi_next;
+	t_state				*ctx;
+	t_le_scan_dev_info	*bt_current;
+	t_le_scan_dev_info	*bt_next;
+	t_wifi_dev_info		*wifi_current;
+	t_wifi_dev_info		*wifi_next;
 	long long			current_ms;
 
-	ctx = (t_ScannerContext *)arg;
+	ctx = (t_state *)arg;
 	bt_current = NULL;
 	bt_next = NULL;
 	wifi_current = NULL;
@@ -24,7 +24,7 @@ void	*dev_lst_monitor(void *arg)
 	{
 		sleep(5);
 		pthread_mutex_lock(&ctx->ble_data_mutex);
-		bt_current = ctx->bt_devices;
+		bt_current = ctx->le_scanned_devices;
 		current_ms = timeval_to_ms();
 		while (bt_current != NULL)
 		{
@@ -33,7 +33,7 @@ void	*dev_lst_monitor(void *arg)
 				printf("Removing device: MAC Address: %s, Last Seen: %lld\n",
 					bt_current->mac_addr, bt_current->last_seen_time_ms);
 				bt_next = bt_current->next;
-				remove_device_lst(ctx, bt_current, BLE_INFO);
+				remove_device_lst(ctx, bt_current, LE_INFO);
 				bt_current = bt_next;
 			}
 			else
@@ -43,7 +43,7 @@ void	*dev_lst_monitor(void *arg)
 		if (ctx->wifi_scan_on == true)
 		{
 			pthread_mutex_lock(&ctx->wifi_data_mutex);
-			wifi_current = ctx->wifi_devices;
+			wifi_current = ctx->wifi_scanned_devices;
 			while (wifi_current != NULL)
 			{
 				if (wifi_current->seen_ms_ago > MS_5MIN)

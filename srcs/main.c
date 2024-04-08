@@ -1,6 +1,6 @@
 #include "mainheader.h"
 
-static int	init_bt_hci(t_ScannerContext *ctx)
+static int	init_bt_hci(t_state *ctx)
 {
 	if ((ctx->bt_dev_id = hci_get_route(NULL)) < 0)
 		return (-1);
@@ -14,20 +14,20 @@ static int	init_bt_hci(t_ScannerContext *ctx)
 	return (0);
 }
 
-static int	init_pthreads(t_AllThreads *t, t_ScannerContext *ctx)
+static int	init_pthreads(t_thread_ids *t, t_state *ctx)
 {
 	if (pthread_mutex_init(&ctx->ble_data_mutex, NULL) != 0
 		|| pthread_mutex_init(&ctx->thread_error_mutex, NULL) != 0)
 		return (1);
-	if (pthread_create(&t->ble_scan_thread, NULL, ble_scan_data_parser,
-			ctx) != 0 || pthread_create(&t->dev_lst_monitor_thread, NULL,
-			dev_lst_monitor, ctx) != 0 || pthread_create(&t->ble_send_thread,
-			NULL, bt_senddata, ctx) != 0)
+	if (pthread_create(&t->le_scan_thread, NULL, le_scan_thread, ctx) != 0
+		|| pthread_create(&t->dev_lst_monitor_thread, NULL, dev_lst_monitor,
+			ctx) != 0 )
+			//|| pthread_create(&t->le_send_thread, NULL, le_send_thread,ctx) != 0)
 		return (1);
 	if (ctx->wifi_scan_on)
 	{
 		if (pthread_mutex_init(&ctx->wifi_data_mutex, NULL) != 0
-			|| pthread_create(&t->wifi_scan_thread, NULL, wifi_scan_data_parser,
+			|| pthread_create(&t->wifi_scan_thread, NULL, wifi_scan_thread,
 				ctx) != 0 || pthread_create(&t->wifi_send_thread, NULL,
 				wifi_senddata, ctx) != 0)
 			return (1);
@@ -35,7 +35,7 @@ static int	init_pthreads(t_AllThreads *t, t_ScannerContext *ctx)
 	return (0);
 }
 
-static int	handle_arguments(int ac, char **av, t_ScannerContext *ctx)
+static int	handle_arguments(int ac, char **av, t_state *ctx)
 {
 	if (ac == 2 && !strcmp(av[1], "wifi"))
 		ctx->wifi_scan_on = true;
@@ -44,11 +44,11 @@ static int	handle_arguments(int ac, char **av, t_ScannerContext *ctx)
 	return (0);
 }
 
-static void	cleanup(t_ScannerContext *ctx, t_AllThreads *threads)
+static void	cleanup(t_state *ctx, t_thread_ids *threads)
 {
-	pthread_join(threads->ble_scan_thread, NULL);
+	pthread_join(threads->le_scan_thread, NULL);
 	pthread_join(threads->dev_lst_monitor_thread, NULL);
-	pthread_join(threads->ble_send_thread, NULL);
+	pthread_join(threads->le_send_thread, NULL);
 	pthread_mutex_destroy(&ctx->thread_error_mutex);
 	pthread_mutex_destroy(&ctx->ble_data_mutex);
 	if (ctx->wifi_scan_on)
@@ -58,17 +58,17 @@ static void	cleanup(t_ScannerContext *ctx, t_AllThreads *threads)
 		pthread_mutex_destroy(&ctx->wifi_data_mutex);
 		free_devices_lst(ctx, WIFI_INFO);
 	}
-	free_devices_lst(ctx, BLE_INFO);
+	free_devices_lst(ctx, LE_INFO);
 	hci_close_dev(ctx->bt_dev_fd);
 }
 
 int	main(int ac, char **av)
 {
-	t_ScannerContext	ctx;
-	t_AllThreads		t;
+	t_state			ctx;
+	t_thread_ids	t;
 
-	ctx = (t_ScannerContext){0};
-	t = (t_AllThreads){0};
+	ctx = (t_state){0};
+	t = (t_thread_ids){0};
 	handle_arguments(ac, av, &ctx);
 	if (init_bt_hci(&ctx) != 0)
 	{

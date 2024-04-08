@@ -9,7 +9,7 @@ long long	timeval_to_ms(void)
 	return (long long)(tv.tv_sec) * 1000LL + (tv.tv_usec / 1000);
 }
 
-int	pthreads_check_terminate_flag(t_ScannerContext *ctx)
+int	pthreads_check_terminate_flag(t_state *ctx)
 {
 	int	flag;
 
@@ -21,7 +21,7 @@ int	pthreads_check_terminate_flag(t_ScannerContext *ctx)
 	return (flag);
 }
 
-void	pthreads_set_terminate_flag(t_ScannerContext *ctx)
+void	pthreads_set_terminate_flag(t_state *ctx)
 {
 	if (ctx == NULL)
 		return ;
