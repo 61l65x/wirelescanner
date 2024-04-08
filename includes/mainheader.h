@@ -9,6 +9,7 @@
 # include <bluetooth/hci_lib.h>
 # include <curl/curl.h>
 # include <errno.h>
+# include <fcntl.h>
 # include <signal.h>
 # include <stdatomic.h>
 # include <stdbool.h>
@@ -97,36 +98,39 @@ typedef struct s_state
 	bool						wifi_data_updated;
 	char						wifi_iface[16];
 	bool						wifi_scan_on;
-	int							bt_num_devices;
-	int							bt_dev_fd;
-	int							bt_dev_id;
-	int							blestatus;
-	pthread_mutex_t				thread_error_mutex;
-	pthread_mutex_t				ble_data_mutex;
+	int							le_num_scanned_devices;
+	pthread_mutex_t				le_data_mutex;
 	pthread_mutex_t				wifi_data_mutex;
+	pthread_mutex_t				hci_data_mutex;
 	volatile int				terminate_flag;
 }								t_state;
 
 extern _Atomic bool g_terminate_flag;
 
+int								init_hci_devices(t_state *state);
 void							init_signals(t_state *state);
 // data structures
 int								wifi_add_device_lst(t_state *ctx,
 									struct bss_info *bss);
-int								le_add_scanned_dev_to_lst(t_state *ctx,
+int								le_add_scanned_dev_to_lst(t_state *s,
+									const bdaddr_t *bdaddr,
 									const char *mac_addr, int8_t rssi);
-void							remove_device_lst(t_state *ctx,
+void							remove_dev_from_lst(t_state *ctx,
 									void *device_to_remove, t_structype type);
 void							clear_lst(t_state *ctx, t_structype type);
+void							le_update_add_dev(t_state *s,
+									const bdaddr_t *bdaddr, int8_t rssi);
 
 // thread utils
-void							pthreads_set_terminate_flag(t_state *ctx);
-int								pthreads_check_terminate_flag(t_state *ctx);
 long long						timeval_to_ms(void);
 // wifi utils
 int								get_active_network_interface(char *buffer,
 									size_t buffer_size);
 const char						*bssid_to_string(const uint8_t bssid[BSSID_LENGTH],
 									char bssid_string[BSSID_STRING_LENGTH]);
+void							eir_parse_name(uint8_t *eir, size_t eir_len,
+									char *buf, size_t buf_len);
+t_hci_dev_data					*get_hci_dev_for_job(t_state *s,
+									t_hci_dev_job job);
 
 #endif

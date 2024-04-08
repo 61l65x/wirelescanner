@@ -39,19 +39,19 @@ void	*le_send_thread(void *arg)
 	curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_callback);
 	if (!curl)
 		return (perror("Error initializing curl"), NULL);
-	while (!pthreads_check_terminate_flag(ctx))
+	while (!IS_TERMINATED())
 	{
-		pthread_mutex_lock(&ctx->ble_data_mutex);
+		pthread_mutex_lock(&ctx->le_data_mutex);
 		for (t_le_scan_dev_info *current = ctx->le_scanned_devices; current != NULL; current = current->next)
 		{
-			pthread_mutex_unlock(&ctx->ble_data_mutex);
+			pthread_mutex_unlock(&ctx->le_data_mutex);
 			if (send_data_post(curl, current->mac_addr, current->rssi,
 					timeval_to_ms() - current->last_seen_time_ms, 1) < 0)
 				fprintf(stderr, "Failed to send data for device %s\n",
 					current->mac_addr);
-			pthread_mutex_lock(&ctx->ble_data_mutex);
+			pthread_mutex_lock(&ctx->le_data_mutex);
 		}
-		pthread_mutex_unlock(&ctx->ble_data_mutex);
+		pthread_mutex_unlock(&ctx->le_data_mutex);
 		usleep(100);
 	}
 	if (curl)

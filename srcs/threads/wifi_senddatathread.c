@@ -43,7 +43,7 @@ void	*wifi_senddata(void *arg)
 	curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_callback);
 	if (!curl)
 		return (perror("Error initializing curl"), NULL);
-	while (!pthreads_check_terminate_flag(ctx))
+	while (!IS_TERMINATED())
 	{
 		pthread_mutex_lock(&ctx->wifi_data_mutex);
 		if (ctx->wifi_data_updated)

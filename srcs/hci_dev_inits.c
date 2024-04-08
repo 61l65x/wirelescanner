@@ -41,7 +41,7 @@ static void	check_hci_capabilities(t_state *s, struct hci_dev_info *di,
 	new_dev->job_mask |= JOB_MASK_SEND_DATA;
 }
 
-int	add_hci_dev_to_lst(t_state *s, struct hci_dev_info *di, int fd)
+static int	add_hci_dev_to_lst(t_state *s, struct hci_dev_info *di, int fd)
 {
 	t_hci_dev_data	*new_dev;
 
@@ -63,7 +63,7 @@ int	add_hci_dev_to_lst(t_state *s, struct hci_dev_info *di, int fd)
 	s->num_hci_devices++;
 	return (0);
 }
-void	print_hci_flags(unsigned int flags)
+static void	print_hci_flags(unsigned int flags)
 {
 	if (flags & (1 << HCI_UP))
 		printf("HCI_UP is set\n");
@@ -83,6 +83,29 @@ void	print_hci_flags(unsigned int flags)
 		printf("HCI_INQUIRY is set\n");
 	if (flags & (1 << HCI_RAW))
 		printf("HCI_RAW is set\n");
+}
+
+t_hci_dev_data	*get_hci_dev_for_job(t_state *s, t_hci_dev_job job)
+{
+	t_hci_dev_data	*current_device;
+	const int		job_mask = (1 << job);
+
+	if (!s)
+		return (NULL);
+	pthread_mutex_lock(&s->hci_data_mutex);
+	current_device = s->hci_devices;
+	while (current_device)
+	{
+		if (current_device->job_mask & job_mask && !current_device->in_use_job)
+		{
+			current_device->in_use_job = true;
+			pthread_mutex_unlock(&s->hci_data_mutex);
+			return (current_device);
+		}
+		current_device = current_device->next;
+	}
+	pthread_mutex_unlock(&s->hci_data_mutex);
+	return (NULL);
 }
 
 int	init_hci_devices(t_state *s)

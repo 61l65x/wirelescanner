@@ -40,7 +40,7 @@ void	*wifi_scan_thread(void *arg)
 		return (perror("wifi_iface is not initialized"), NULL);
 	if ((wifi = wifi_scan_init(ctx->wifi_iface)) == NULL)
 		return (perror("Failed to initialize wifi scan"), NULL);
-	while (!pthreads_check_terminate_flag(ctx))
+	while (!IS_TERMINATED())
 	{
 		if ((scan_count = wifi_scan_all(wifi, bss, MAX_BSS_ENTRIES)) < 0)
 			perror("Unable to get scan data");
@@ -50,7 +50,7 @@ void	*wifi_scan_thread(void *arg)
 			for (i = 0; i < scan_count && i < MAX_BSS_ENTRIES; ++i)
 			{
 				if (add_update_wifi_device(ctx, &bss[i]) < 0)
-					pthreads_set_terminate_flag(ctx);
+					SET_TERMINATE_FLAG();
 			}
 			ctx->wifi_data_updated = true;
 			pthread_mutex_unlock(&ctx->wifi_data_mutex);
