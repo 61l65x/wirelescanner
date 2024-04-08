@@ -1,21 +1,22 @@
 #include "mainheader.h"
 
-static int	init_pthreads(t_thread_ids *t, t_state *ctx)
+static int	init_pthreads(t_thread_ids *t, t_state *s)
 {
-	if (pthread_mutex_init(&ctx->le_data_mutex, NULL) != 0
-		|| pthread_mutex_init(&ctx->hci_data_mutex, NULL) != 0)
+	if (pthread_mutex_init(&s->le_data_mutex, NULL) != 0
+		|| pthread_mutex_init(&s->hci_data_mutex, NULL) != 0
+		|| pthread_mutex_init(&s->cl_data_mutex, NULL) != 0)
 		return (1);
-	if (pthread_create(&t->le_scan_id, NULL, le_scan_thread, ctx) != 0
-		|| pthread_create(&t->lst_monitor_id, NULL, lst_monitor_thread,
-			ctx) != 0)
-		//|| pthread_create(&t->le_send_thread, NULL, le_send_thread,ctx) != 0)
+	if (pthread_create(&t->le_scan_id, NULL, le_scan_thread, s) != 0
+		|| pthread_create(&t->lst_monitor_id, NULL, lst_monitor_thread, s) != 0
+		|| pthread_create(&t->classic_scan_id, NULL, cl_scan_thread, s) != 0)
+		//|| pthread_create(&t->le_send_thread, NULL, le_send_thread, s) != 0)
 		return (1);
-	if (ctx->wifi_scan_on)
+	if (s->wifi_scan_on)
 	{
-		if (pthread_mutex_init(&ctx->wifi_data_mutex, NULL) != 0
+		if (pthread_mutex_init(&s->wifi_data_mutex, NULL) != 0
 			|| pthread_create(&t->wifi_scan_thread, NULL, wifi_scan_thread,
-				ctx) != 0 || pthread_create(&t->wifi_send_thread, NULL,
-				wifi_senddata, ctx) != 0)
+				s) != 0 || pthread_create(&t->wifi_send_thread, NULL,
+				wifi_senddata, s) != 0)
 			return (1);
 	}
 	return (0);

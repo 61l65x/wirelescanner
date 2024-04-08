@@ -6,6 +6,7 @@
 typedef struct s_thread_ids
 {
 	pthread_t	le_scan_id;
+	pthread_t	classic_scan_id;
 	pthread_t	le_send_thread;
 	pthread_t	wifi_send_thread;
 	pthread_t	wifi_scan_thread;
@@ -18,5 +19,6 @@ void			*le_send_thread(void *arg);
 void			*lst_monitor_thread(void *arg);
 void			*wifi_scan_thread(void *arg);
 void			*wifi_senddata(void *arg);
+void			*cl_scan_thread(void *arg);
 
 #endif

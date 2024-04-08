@@ -43,7 +43,26 @@ void	remove_dev_from_lst(t_state *s, void *dev_to_remove, t_structype type)
 			}
 		}
 	}
-	if (type == HCI_INFO)
+	else if (type == CL_INFO)
+	{
+		for (t_cl_inquiry_dev_info *current = s->cl_scanned_devices,
+			*prev = NULL; current != NULL; prev = current,
+			current = current->next)
+		{
+			if (current == (t_cl_inquiry_dev_info *)dev_to_remove)
+			{
+				if (prev == NULL)
+					s->cl_scanned_devices = current->next;
+				else
+					prev->next = current->next;
+				s->cl_num_scanned_devices--;
+				free(current);
+				current = NULL;
+				return ;
+			}
+		}
+	}
+	else if (type == HCI_INFO)
 	{
 		for (t_hci_dev_data *current = s->hci_devices,
 			*prev = NULL; current != NULL; prev = current,
@@ -87,9 +106,6 @@ void	remove_dev_from_lst(t_state *s, void *dev_to_remove, t_structype type)
 
 void	clear_lst(t_state *s, t_structype type)
 {
-	t_wifi_dev_info	*current;
-	t_wifi_dev_info	*next;
-
 	if (type == LE_INFO || type == ALL_INFO)
 	{
 		pthread_mutex_lock(&s->le_data_mutex);
@@ -120,10 +136,24 @@ void	clear_lst(t_state *s, t_structype type)
 		s->hci_devices = NULL;
 		s->num_hci_devices = 0;
 	}
-	else if (type == WIFI_INFO || type == ALL_INFO)
+	if (type == CL_INFO || type == ALL_INFO)
+	{
+		pthread_mutex_lock(&s->cl_data_mutex);
+		for (t_cl_inquiry_dev_info *current = s->cl_scanned_devices,
+			*next; current != NULL; current = next)
+		{
+			next = current->next;
+			free(current);
+		}
+		pthread_mutex_unlock(&s->cl_data_mutex);
+		s->cl_scanned_devices = NULL;
+		s->cl_num_scanned_devices = 0;
+	}
+	if (type == WIFI_INFO || type == ALL_INFO)
 	{
 		pthread_mutex_lock(&s->wifi_data_mutex);
-		for (current = s->wifi_scanned_devices; current != NULL; current = next)
+		for (t_wifi_dev_info *current = s->wifi_scanned_devices,
+			*next; current != NULL; current = next)
 		{
 			next = current->next;
 			free(current);
