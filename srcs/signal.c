@@ -11,7 +11,6 @@ static void	main_signal_handler(int signo, siginfo_t *info, void *ptr)
 	{
 		printf("SIGINT received\n");
 		SET_TERMINATE_FLAG();
-		exit(EXIT_SUCCESS);
 	}
 }
 
