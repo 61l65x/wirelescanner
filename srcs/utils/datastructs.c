@@ -1,27 +1,5 @@
 #include "mainheader.h"
 
-int	wifi_add_device_lst(t_state *ctx, struct bss_info *bss)
-{
-	t_wifi_dev_info	*new_device;
-
-	new_device = calloc(1, sizeof(t_wifi_dev_info));
-	if (!new_device)
-	{
-		perror("malloc in add_wifi_device");
-		return (-1);
-	}
-	bssid_to_string(bss->bssid, new_device->mac_addr);
-	snprintf(new_device->ssid, sizeof(new_device->ssid), "%s", bss->ssid);
-	new_device->seen_ms_ago = bss->seen_ms_ago;
-	new_device->rssi = bss->signal_mbm / 100;
-	// Assuming signal_mbm is in millibels and you want it in dB
-	new_device->frequency = (float)bss->frequency / 1000.0;
-	new_device->is_connected = bss->status == BSS_ASSOCIATED ? 1 : 0;
-	new_device->next = ctx->wifi_scanned_devices;
-	ctx->wifi_scanned_devices = new_device;
-	return (0);
-}
-
 void	remove_dev_from_lst(t_state *s, void *dev_to_remove, t_structype type)
 {
 	if (type == LE_INFO)

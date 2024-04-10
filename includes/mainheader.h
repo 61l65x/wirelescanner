@@ -124,8 +124,6 @@ extern _Atomic bool g_terminate_flag;
 int									init_hci_devices(t_state *state);
 void								init_signals(t_state *state);
 // data structures
-int									wifi_add_device_lst(t_state *ctx,
-										struct bss_info *bss);
 int									le_add_scanned_dev_to_lst(t_state *s,
 										const bdaddr_t *bdaddr,
 										const char *mac_addr, int8_t rssi);
