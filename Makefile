@@ -1,4 +1,4 @@
-NAME=btscanner
+NAME=wirelescanner
 CFLAGS = -Wall -g -O2 
 LIBS = `pkg-config --cflags libcurl --libs libcurl bluez` -lbluetooth -lpthread -lmnl
 INCLUDES = -I./includes -I./apis/wifiscan

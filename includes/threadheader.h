@@ -8,8 +8,8 @@ typedef struct s_thread_ids
 	pthread_t	le_scan_id;
 	pthread_t	classic_scan_id;
 	pthread_t	le_send_thread;
-	pthread_t	wifi_send_thread;
-	pthread_t	wifi_scan_thread;
+	pthread_t	wifi_send_id;
+	pthread_t	wifi_scan_id;
 	pthread_t	lst_monitor_id;
 }				t_thread_ids;
 

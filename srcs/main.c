@@ -14,9 +14,8 @@ static int	init_pthreads(t_thread_ids *t, t_state *s)
 	if (s->wifi_scan_on)
 	{
 		if (pthread_mutex_init(&s->wifi_data_mutex, NULL) != 0
-			|| pthread_create(&t->wifi_scan_thread, NULL, wifi_scan_thread,
-				s) != 0 || pthread_create(&t->wifi_send_thread, NULL,
-				wifi_senddata, s) != 0)
+			|| pthread_create(&t->wifi_scan_id, NULL, wifi_scan_thread, s) != 0)
+			//|| pthread_create(&t->wifi_send_id, NULL,wifi_senddata, s) != 0)
 			return (1);
 	}
 	return (0);
@@ -41,8 +40,8 @@ static void	cleanup(t_state *ctx, t_thread_ids *threads)
 	pthread_mutex_destroy(&ctx->hci_data_mutex);
 	if (ctx->wifi_scan_on)
 	{
-		pthread_join(threads->wifi_send_thread, NULL);
-		pthread_join(threads->wifi_scan_thread, NULL);
+		pthread_join(threads->wifi_send_id, NULL);
+		pthread_join(threads->wifi_scan_id, NULL);
 		pthread_mutex_destroy(&ctx->wifi_data_mutex);
 		clear_lst(ctx, WIFI_INFO);
 	}

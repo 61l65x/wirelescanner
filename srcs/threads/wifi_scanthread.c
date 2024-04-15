@@ -53,6 +53,7 @@ void	*wifi_scan_thread(void *arg)
 	t_state				*ctx;
 	struct wifi_scan	*wifi;
 	struct bss_info		bss[MAX_BSS_ENTRIES];
+	char				bssid_str[BSSID_STRING_LENGTH];
 
 	ctx = (t_state *)arg;
 	wifi = NULL;
@@ -72,6 +73,13 @@ void	*wifi_scan_thread(void *arg)
 			{
 				if (add_update_wifi_device(ctx, &bss[i]) < 0)
 					SET_TERMINATE_FLAG();
+				printf("SSID: %s, BSSID: %s, RSSI: %d dBm, Frequency: %.3f GHz,\
+					Last seen: %d ms ago\n",
+						bss[i].ssid,
+						bssid_to_string(bss[i].bssid, bssid_str),
+						bss[i].signal_mbm / 100,
+						(float)bss[i].frequency / 1000.0,
+						bss[i].seen_ms_ago);
 			}
 			ctx->wifi_data_updated = true;
 			pthread_mutex_unlock(&ctx->wifi_data_mutex);
