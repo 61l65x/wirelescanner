@@ -28,9 +28,9 @@
 # define IS_TERMINATED() atomic_load(&g_terminate_flag)
 # define SET_TERMINATE_FLAG() atomic_store(&g_terminate_flag, true)
 # define MAX_HCI_DEVICES 16
-# define JOB_MASK_SEND_DATA (1 << JOB_SEND_DATA)
-# define JOB_MASK_SCAN_LE_DATA (1 << JOB_SCAN_LE_DATA)
-# define JOB_MASK_SCAN_CLASSIC_DATA (1 << JOB_SCAN_CLASSIC_DATA)
+# define JOB_MASK_SEND_DATA (1 << HCI_JOB_SEND_DATA)
+# define JOB_MASK_SCAN_LE_DATA (1 << HCI_JOB_SCAN_LE_DATA)
+# define JOB_MASK_SCAN_CLASSIC_DATA (1 << HCI_JOB_SCAN_CLASSIC_DATA)
 # define L2CAP_CID_SIGNALING 0x0001
 # define L2CAP_CID_CONNECTIONLESS 0x0002
 # define L2CAP_CID_AMP_MANAGER 0x0003
@@ -42,18 +42,22 @@ typedef enum e_structtype
 {
 	LE_INFO,
 	HCI_INFO,
+	NTWRK_INFO,
 	CL_INFO,
 	ALL_INFO,
 	WIFI_INFO,
 }									t_structype;
 
-typedef enum
+typedef enum e_iface_job
 {
-	NO_JOB,
-	JOB_SEND_DATA,
-	JOB_SCAN_LE_DATA,
-	JOB_SCAN_CLASSIC_DATA
-}									t_hci_dev_job;
+	HCI_NO_JOB,
+	HCI_JOB_SEND_DATA,
+	HCI_JOB_SCAN_LE_DATA,
+	HCI_JOB_SCAN_CLASSIC_DATA,
+	NTWRK_NO_JOB,
+	NTWRK_JOB_SEND_DATA,
+	NTWRK_JOB_SCAN_DATA,
+}									t_iface_job;
 
 typedef struct s_le_scan_dev_info
 {
@@ -76,7 +80,7 @@ typedef struct s_cl_inquiry_dev_info
 	struct s_cl_inquiry_dev_info	*next;
 }									t_cl_inquiry_dev_info;
 
-typedef struct s_wifi_dev_info
+typedef struct s_wifi_scan_dev_info
 {
 	char							mac_addr[19];
 	char							ssid[33];
@@ -84,10 +88,10 @@ typedef struct s_wifi_dev_info
 	int8_t							rssi;
 	float							frequency;
 	bool							is_connected;
-	struct s_wifi_dev_info			*next;
-}									t_wifi_dev_info;
+	struct s_wifi_scan_dev_info		*next;
+}									t_wifi_scan_dev_info;
 
-typedef struct s_hci_dev_data
+typedef struct s_bt_hci_iface
 {
 	int								dev_id;
 	int								sock_fd;
@@ -96,21 +100,32 @@ typedef struct s_hci_dev_data
 	char							local_name[248];
 	bool							in_use_job;
 	uint16_t						hci_handle;
-	t_hci_dev_job					job_mask;
-	struct s_hci_dev_data			*next;
-}									t_hci_dev_data;
+	t_iface_job						job_mask;
+	struct s_bt_hci_iface			*next;
+}									t_bt_hci_iface;
+
+typedef struct s_ntwrk_iface
+{
+	char							iface_name[50];
+	int								ifindex;
+	char							wdev[20];
+	char							addr[18];
+	char							ssid[50];
+	char							type[20];
+	struct s_ntwrk_iface			*next;
+}									t_ntwrk_iface;
 
 typedef struct s_state
 {
 	t_le_scan_dev_info				*le_scanned_devices;
-	t_wifi_dev_info					*wifi_scanned_devices;
+	t_wifi_scan_dev_info			*wifi_scanned_devices;
 	t_cl_inquiry_dev_info			*cl_scanned_devices;
-	t_hci_dev_data					*hci_devices;
+	t_bt_hci_iface					*hci_ifaces;
 	int								cl_num_scanned_devices;
 	int								num_hci_devices;
-	int								wifi_num_devices;
+	int								wifi_num_scanned_devices;
 	bool							wifi_data_updated;
-	char							wifi_iface[16];
+	char							wifi_iface_name[16];
 	bool							wifi_scan_on;
 	int								le_num_scanned_devices;
 	pthread_mutex_t					le_data_mutex;
@@ -121,7 +136,7 @@ typedef struct s_state
 
 extern _Atomic bool g_terminate_flag;
 
-int									init_hci_devices(t_state *state);
+int									init_bluetooth_ifaces(t_state *s);
 void								init_signals(t_state *state);
 // data structures
 int									le_add_scanned_dev_to_lst(t_state *s,
@@ -143,7 +158,7 @@ const char							*bssid_to_string(const uint8_t bssid[BSSID_LENGTH],
 										char bssid_string[BSSID_STRING_LENGTH]);
 void								eir_parse_name(uint8_t *eir, size_t eir_len,
 										char *buf, size_t buf_len);
-t_hci_dev_data						*get_hci_dev_for_job(t_state *s,
-										t_hci_dev_job job);
+t_bt_hci_iface						*get_hci_for_job(t_state *s,
+										t_iface_job job);
 
 #endif

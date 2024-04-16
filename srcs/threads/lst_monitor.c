@@ -11,8 +11,8 @@ static bool	not_terminated_sleep(int check_interval)
 
 static void	check_wifi_devices(t_state *s)
 {
-	t_wifi_dev_info	*current;
-	t_wifi_dev_info	*next;
+	t_wifi_scan_dev_info	*current;
+	t_wifi_scan_dev_info	*next;
 
 	current = s->wifi_scanned_devices;
 	while (!IS_TERMINATED() && current != NULL)

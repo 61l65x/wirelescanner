@@ -3,11 +3,19 @@
 #include "wifi_scan_api.h"
 #define MAX_BSS_ENTRIES 100
 
+const char	*bssid_to_string(const uint8_t bssid[BSSID_LENGTH],
+		char bssid_string[BSSID_STRING_LENGTH])
+{
+	snprintf(bssid_string, BSSID_STRING_LENGTH, "%02x:%02x:%02x:%02x:%02x:%02x",
+		bssid[0], bssid[1], bssid[2], bssid[3], bssid[4], bssid[5]);
+	return (bssid_string);
+}
+
 static int	wifi_add_device_lst(t_state *ctx, struct bss_info *bss)
 {
-	t_wifi_dev_info	*new_device;
+	t_wifi_scan_dev_info	*new_device;
 
-	new_device = calloc(1, sizeof(t_wifi_dev_info));
+	new_device = calloc(1, sizeof(t_wifi_scan_dev_info));
 	if (!new_device)
 		return (perror("malloc in add_wifi_device"), -1);
 	bssid_to_string(bss->bssid, new_device->mac_addr);
@@ -22,7 +30,8 @@ static int	wifi_add_device_lst(t_state *ctx, struct bss_info *bss)
 	return (0);
 }
 
-static void	wifi_update_device(t_wifi_dev_info *current, struct bss_info *bss)
+static void	wifi_update_device(t_wifi_scan_dev_info *current,
+		struct bss_info *bss)
 {
 	snprintf(current->ssid, sizeof(current->ssid), "%s", bss->ssid);
 	current->seen_ms_ago = bss->seen_ms_ago;
@@ -34,8 +43,8 @@ static void	wifi_update_device(t_wifi_dev_info *current, struct bss_info *bss)
 
 static int	add_update_wifi_device(t_state *ctx, struct bss_info *bss)
 {
-	char			bssid_str[BSSID_STRING_LENGTH];
-	t_wifi_dev_info	*current;
+	char					bssid_str[BSSID_STRING_LENGTH];
+	t_wifi_scan_dev_info	*current;
 
 	current = ctx->wifi_scanned_devices;
 	bssid_to_string(bss->bssid, bssid_str);
@@ -58,9 +67,9 @@ void	*wifi_scan_thread(void *arg)
 	ctx = (t_state *)arg;
 	wifi = NULL;
 	int scan_count, i;
-	if (ctx == NULL || ctx->wifi_iface[0] == '\0')
+	if (ctx == NULL || ctx->wifi_iface_name[0] == '\0')
 		return (perror("wifi_iface is not initialized"), NULL);
-	if ((wifi = wifi_scan_init(ctx->wifi_iface)) == NULL)
+	if ((wifi = wifi_scan_init(ctx->wifi_iface_name)) == NULL)
 		return (perror("Failed to initialize wifi scan"), NULL);
 	while (!IS_TERMINATED())
 	{

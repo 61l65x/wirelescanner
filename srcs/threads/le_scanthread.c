@@ -1,6 +1,6 @@
 #include "mainheader.h"
 
-static int	set_le_socket_opts(t_hci_dev_data *hci_dev)
+static int	set_le_socket_opts(t_bt_hci_iface *hci_dev)
 {
 	struct hci_filter	nf;
 	int					flags;
@@ -20,7 +20,7 @@ static int	set_le_socket_opts(t_hci_dev_data *hci_dev)
 	return (OK);
 }
 
-static void	scan_loop(t_state *s, t_hci_dev_data *hci_dev)
+static void	scan_loop(t_state *s, t_bt_hci_iface *hci_dev)
 {
 	int8_t				rssi;
 	le_advertising_info	*info;
@@ -80,11 +80,11 @@ static void	scan_loop(t_state *s, t_hci_dev_data *hci_dev)
 void	*le_scan_thread(void *arg)
 {
 	t_state			*s;
-	t_hci_dev_data	*hci_dev;
+	t_bt_hci_iface	*hci_dev;
 
 	s = (t_state *)arg;
 	printf("before job assing le\n");
-	hci_dev = get_hci_dev_for_job(s, JOB_SCAN_LE_DATA);
+	hci_dev = get_hci_for_job(s, HCI_JOB_SCAN_LE_DATA);
 	if (!hci_dev)
 		return (perror("get_hci_dev_for_job le_scan_thread"), NULL);
 	printf("Starting LE scan controller %d\n", hci_dev->sock_fd);

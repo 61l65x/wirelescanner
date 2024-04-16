@@ -62,14 +62,14 @@ void	*cl_scan_thread(void *arg)
 	int				max_rsp;
 	int				num_rsp;
 	int				flags;
-	t_hci_dev_data	*hci;
+	t_bt_hci_iface	*hci;
 	t_state			*s;
 	inquiry_info	*ii_ptrs[255];
 
 	for (int i = 0; i < 255; ++i)
 		ii_ptrs[i] = &ii[i];
 	s = (t_state *)arg;
-	hci = get_hci_dev_for_job(s, JOB_SCAN_CLASSIC_DATA);
+	hci = get_hci_for_job(s, HCI_JOB_SCAN_CLASSIC_DATA);
 	if (!hci)
 		return (perror("get_hci_dev_for_job cl_scan_thread"), NULL);
 	printf("Starting classic scan controller %d\n", hci->sock_fd);

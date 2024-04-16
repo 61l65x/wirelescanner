@@ -1,83 +1,60 @@
 #include "mainheader.h"
 
+typedef struct s_generic_struct
+{
+	void	*next;
+}			t_generic_struct;
+
 void	remove_dev_from_lst(t_state *s, void *dev_to_remove, t_structype type)
 {
-	if (type == LE_INFO)
+	void	**head;
+	int		*count;
+	void	**current;
+	void	**prev;
+
+	current = NULL;
+	prev = NULL;
+	head = NULL;
+	count = NULL;
+	current = NULL;
+	switch (type)
 	{
-		for (t_le_scan_dev_info *current = s->le_scanned_devices,
-			*prev = NULL; current != NULL; prev = current,
-			current = current->next)
-		{
-			if (current == (t_le_scan_dev_info *)dev_to_remove)
-			{
-				if (prev == NULL)
-					s->le_scanned_devices = current->next;
-				else
-					prev->next = current->next;
-				s->le_num_scanned_devices--;
-				free(current);
-				current = NULL;
-				return ;
-			}
-		}
+	case LE_INFO:
+		head = (void **)&s->le_scanned_devices;
+		count = &s->le_num_scanned_devices;
+		break ;
+	case CL_INFO:
+		head = (void **)&s->cl_scanned_devices;
+		count = &s->cl_num_scanned_devices;
+		break ;
+	case HCI_INFO:
+		head = (void **)&s->hci_ifaces;
+		count = &s->num_hci_devices;
+		break ;
+	case WIFI_INFO:
+		head = (void **)&s->wifi_scanned_devices;
+		count = &s->wifi_num_scanned_devices;
+		break ;
+	case NTWRK_INFO:
+		break ;
+	default:
+		return ;
 	}
-	else if (type == CL_INFO)
+	for (current = head; *current; prev = current,
+		current = &((t_generic_struct *)(*current))->next)
 	{
-		for (t_cl_inquiry_dev_info *current = s->cl_scanned_devices,
-			*prev = NULL; current != NULL; prev = current,
-			current = current->next)
+		if (*current == dev_to_remove)
 		{
-			if (current == (t_cl_inquiry_dev_info *)dev_to_remove)
-			{
-				if (prev == NULL)
-					s->cl_scanned_devices = current->next;
-				else
-					prev->next = current->next;
-				s->cl_num_scanned_devices--;
-				free(current);
-				current = NULL;
-				return ;
-			}
-		}
-	}
-	else if (type == HCI_INFO)
-	{
-		for (t_hci_dev_data *current = s->hci_devices,
-			*prev = NULL; current != NULL; prev = current,
-			current = current->next)
-		{
-			if (current == (t_hci_dev_data *)dev_to_remove)
-			{
-				if (prev == NULL)
-					s->hci_devices = current->next;
-				else
-					prev->next = current->next;
-				s->num_hci_devices--;
-				if (current->sock_fd >= 0)
-					hci_close_dev(current->sock_fd);
-				free(current);
-				current = NULL;
-				return ;
-			}
-		}
-	}
-	else if (type == WIFI_INFO)
-	{
-		for (t_wifi_dev_info *current = s->wifi_scanned_devices,
-			*prev = NULL; current != NULL; prev = current,
-			current = current->next)
-		{
-			if (current == (t_wifi_dev_info *)dev_to_remove)
-			{
-				if (prev == NULL)
-					s->wifi_scanned_devices = current->next;
-				else
-					prev->next = current->next;
-				s->wifi_num_devices--;
-				free(current);
-				current = NULL;
-				return ;
-			}
+			if (prev == NULL)
+				*head = ((t_generic_struct *)(*current))->next;
+			else
+				*((void **)(*prev)) = ((t_generic_struct *)(*current))->next;
+			(*count)--;
+			if (type == HCI_INFO
+				&& ((t_bt_hci_iface *)(*current))->sock_fd >= 0)
+				hci_close_dev(((t_bt_hci_iface *)(*current))->sock_fd);
+			free(*current);
+			break ;
 		}
 	}
 }
@@ -101,7 +78,7 @@ void	clear_lst(t_state *s, t_structype type)
 	if (type == HCI_INFO || type == ALL_INFO)
 	{
 		pthread_mutex_lock(&s->hci_data_mutex);
-		for (t_hci_dev_data *current = s->hci_devices,
+		for (t_bt_hci_iface *current = s->hci_ifaces,
 			*next; current != NULL; current = next)
 		{
 			next = current->next;
@@ -111,7 +88,7 @@ void	clear_lst(t_state *s, t_structype type)
 			current = NULL;
 		}
 		pthread_mutex_unlock(&s->hci_data_mutex);
-		s->hci_devices = NULL;
+		s->hci_ifaces = NULL;
 		s->num_hci_devices = 0;
 	}
 	if (type == CL_INFO || type == ALL_INFO)
@@ -130,7 +107,7 @@ void	clear_lst(t_state *s, t_structype type)
 	if (type == WIFI_INFO || type == ALL_INFO)
 	{
 		pthread_mutex_lock(&s->wifi_data_mutex);
-		for (t_wifi_dev_info *current = s->wifi_scanned_devices,
+		for (t_wifi_scan_dev_info *current = s->wifi_scanned_devices,
 			*next; current != NULL; current = next)
 		{
 			next = current->next;
@@ -139,6 +116,6 @@ void	clear_lst(t_state *s, t_structype type)
 		}
 		pthread_mutex_unlock(&s->wifi_data_mutex);
 		s->wifi_scanned_devices = NULL;
-		s->wifi_num_devices = 0;
+		s->wifi_num_scanned_devices = 0;
 	}
 }

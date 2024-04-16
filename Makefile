@@ -28,7 +28,7 @@ re: clean all
 install-deps:
 	@echo "\033[0;32mInstalling dependencies...\033[0m"
 	sudo apt-get update
-	sudo apt-get install -y libcurl4-openssl-dev libbluetooth-dev libmnl-dev
+	sudo apt-get install -y libcurl4-openssl-dev libbluetooth-dev libmnl-dev iw
 
 help:
 	@echo "\033[0;33mAvailable rules:\033[0m"

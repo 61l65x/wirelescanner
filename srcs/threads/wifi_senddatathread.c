@@ -1,7 +1,7 @@
 #include "mainheader.h"
 
 // Function to send data as a POST request
-static int	send_wifi_data_post(CURL *curl, const t_wifi_dev_info *device,
+static int	send_wifi_data_post(CURL *curl, const t_wifi_scan_dev_info *device,
 		int sender_id)
 {
 	CURLcode	res;
@@ -32,13 +32,13 @@ static size_t	write_callback(char *ptr, size_t size, size_t nmemb,
 
 void	*wifi_senddata(void *arg)
 {
-	t_state			*ctx;
-	CURL			*curl;
-	t_wifi_dev_info	tempCopy;
+	t_state					*ctx;
+	CURL					*curl;
+	t_wifi_scan_dev_info	tempCopy;
 
 	ctx = (t_state *)arg;
 	curl = curl_easy_init();
-	tempCopy = (t_wifi_dev_info){0};
+	tempCopy = (t_wifi_scan_dev_info){0};
 	// curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
 	curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_callback);
 	if (!curl)
@@ -48,7 +48,7 @@ void	*wifi_senddata(void *arg)
 		pthread_mutex_lock(&ctx->wifi_data_mutex);
 		if (ctx->wifi_data_updated)
 		{
-			for (t_wifi_dev_info *current = ctx->wifi_scanned_devices; current != NULL; current = current->next)
+			for (t_wifi_scan_dev_info *current = ctx->wifi_scanned_devices; current != NULL; current = current->next)
 			{
 				tempCopy = *current;
 				if (send_wifi_data_post(curl, &tempCopy, 1) < 0)

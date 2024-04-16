@@ -56,14 +56,14 @@ int	main(int ac, char **av)
 	threads = (t_thread_ids){0};
 	init_signals(&state);
 	handle_arguments(ac, av, &state);
-	if (init_hci_devices(&state) != 0)
+	if (init_bluetooth_ifaces(&state) != 0)
 	{
 		return (perror(BT_HCI_ERR_MSG), EXIT_FAILURE);
 	}
 	if (state.wifi_scan_on)
 	{
-		if (get_active_network_interface(state.wifi_iface,
-				sizeof(state.wifi_iface)) != 0)
+		if (get_active_network_interface(state.wifi_iface_name,
+				sizeof(state.wifi_iface_name)) != 0)
 			perror(NTWRK_IFACE_ERR_MSG);
 	}
 	if (init_pthreads(&threads, &state) != 0)
