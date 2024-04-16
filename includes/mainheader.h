@@ -138,20 +138,16 @@ extern _Atomic bool g_terminate_flag;
 
 int									init_bluetooth_ifaces(t_state *s);
 void								init_signals(t_state *state);
-// data structures
 int									le_add_scanned_dev_to_lst(t_state *s,
 										const bdaddr_t *bdaddr,
 										const char *mac_addr, int8_t rssi);
-void								remove_dev_from_lst(t_state *ctx,
+void								remove_from_lst(t_state *ctx,
 										void *device_to_remove,
 										t_structype type);
 void								clear_lst(t_state *ctx, t_structype type);
 void								le_update_add_dev(t_state *s,
 										const bdaddr_t *bdaddr, int8_t rssi);
-
-// thread utils
 long long							timeval_to_ms(void);
-// wifi utils
 int									get_active_network_interface(char *buffer,
 										size_t buffer_size);
 const char							*bssid_to_string(const uint8_t bssid[BSSID_LENGTH],

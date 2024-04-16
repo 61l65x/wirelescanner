@@ -5,59 +5,34 @@ typedef struct s_generic_struct
 	void	*next;
 }			t_generic_struct;
 
-void	remove_dev_from_lst(t_state *s, void *dev_to_remove, t_structype type)
+void remove_from_lst(t_state *s, void *to_remove, t_structype type)
 {
-	void	**head;
-	int		*count;
-	void	**current;
-	void	**prev;
+    void **head = NULL;
+    int *count = NULL;
 
-	current = NULL;
-	prev = NULL;
-	head = NULL;
-	count = NULL;
-	current = NULL;
-	switch (type)
+    switch (type)
 	{
-	case LE_INFO:
-		head = (void **)&s->le_scanned_devices;
-		count = &s->le_num_scanned_devices;
-		break ;
-	case CL_INFO:
-		head = (void **)&s->cl_scanned_devices;
-		count = &s->cl_num_scanned_devices;
-		break ;
-	case HCI_INFO:
-		head = (void **)&s->hci_ifaces;
-		count = &s->num_hci_devices;
-		break ;
-	case WIFI_INFO:
-		head = (void **)&s->wifi_scanned_devices;
-		count = &s->wifi_num_scanned_devices;
-		break ;
-	case NTWRK_INFO:
-		break ;
-	default:
-		return ;
-	}
-	for (current = head; *current; prev = current,
-		current = &((t_generic_struct *)(*current))->next)
-	{
-		if (*current == dev_to_remove)
-		{
-			if (prev == NULL)
-				*head = ((t_generic_struct *)(*current))->next;
-			else
-				*((void **)(*prev)) = ((t_generic_struct *)(*current))->next;
-			(*count)--;
-			if (type == HCI_INFO
-				&& ((t_bt_hci_iface *)(*current))->sock_fd >= 0)
-				hci_close_dev(((t_bt_hci_iface *)(*current))->sock_fd);
-			free(*current);
-			break ;
-		}
-	}
+        case LE_INFO: head = (void **)&s->le_scanned_devices; count = &s->le_num_scanned_devices; break;
+        case CL_INFO: head = (void **)&s->cl_scanned_devices; count = &s->cl_num_scanned_devices; break;
+        case HCI_INFO: head = (void **)&s->hci_ifaces; count = &s->num_hci_devices; break;
+        case WIFI_INFO: head = (void **)&s->wifi_scanned_devices; count = &s->wifi_num_scanned_devices; break;
+        case NTWRK_INFO: return;
+        default: return;
+    }
+
+    for (void **current = head, **prev = NULL; *current; prev = current, current = &((t_generic_struct *)(*current))->next) {
+        if (*current == to_remove) {
+            *head = prev ? *((void **)(*prev)) = ((t_generic_struct *)(*current))->next : ((t_generic_struct *)(*current))->next;
+            if (type == HCI_INFO && ((t_bt_hci_iface *)(*current))->sock_fd >= 0)
+                hci_close_dev(((t_bt_hci_iface *)(*current))->sock_fd);
+            (*count)--;
+            free(*current);
+			*current = NULL;
+            break;
+        }
+    }
 }
+
 
 void	clear_lst(t_state *s, t_structype type)
 {

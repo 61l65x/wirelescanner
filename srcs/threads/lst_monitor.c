@@ -22,7 +22,7 @@ static void	check_wifi_devices(t_state *s)
 			printf("Removing WIFI device: MAC Address: %s, Last Seen: %ld\n",
 				current->mac_addr, current->seen_ms_ago);
 			next = current->next;
-			remove_dev_from_lst(s, current, WIFI_INFO);
+			remove_from_lst(s, current, WIFI_INFO);
 			current = next;
 		}
 		else
@@ -47,7 +47,7 @@ static void	check_le_devices(t_state *s)
 					le_current->mac_addr,
 					le_current->last_seen_time_ms);
 			le_next = le_current->next;
-			remove_dev_from_lst(s, le_current, LE_INFO);
+			remove_from_lst(s, le_current, LE_INFO);
 			le_current = le_next;
 		}
 		else
