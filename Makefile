@@ -1,5 +1,5 @@
 NAME=wirelescanner
-CFLAGS = -Wall -g -O2 
+CFLAGS = -Wall -g -O2 #-fsanitize=address -fsanitize=leak -fsanitize=undefined -fsanitize=pointer-subtract -fsanitize=pointer-compare
 LIBS = `pkg-config --cflags libcurl --libs libcurl bluez` -lbluetooth -lpthread -lmnl
 INCLUDES = -I./includes -I./apis/wifiscan
 SRCS = $(shell find srcs -name "*.c" && find apis -name "*.c")

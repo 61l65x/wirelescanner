@@ -67,9 +67,10 @@ void	*wifi_scan_thread(void *arg)
 	ctx = (t_state *)arg;
 	wifi = NULL;
 	int scan_count, i;
-	if (ctx == NULL || ctx->wifi_iface_name[0] == '\0')
+	printf("wifi iface name is %s\n", ctx->ntwrk_ifaces->iface_name);
+	if (ctx == NULL || !ctx->ntwrk_ifaces)
 		return (perror("wifi_iface is not initialized"), NULL);
-	if ((wifi = wifi_scan_init(ctx->wifi_iface_name)) == NULL)
+	if ((wifi = wifi_scan_init(ctx->ntwrk_ifaces->iface_name)) == NULL)
 		return (perror("Failed to initialize wifi scan"), NULL);
 	while (!IS_TERMINATED())
 	{

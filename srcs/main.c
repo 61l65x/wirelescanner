@@ -54,18 +54,15 @@ int	main(int ac, char **av)
 
 	state = (t_state){0};
 	threads = (t_thread_ids){0};
+	printf("Run as a root !\n");
 	init_signals(&state);
 	handle_arguments(ac, av, &state);
 	if (init_bluetooth_ifaces(&state) != 0)
 	{
 		return (perror(BT_HCI_ERR_MSG), EXIT_FAILURE);
 	}
-	if (state.wifi_scan_on)
-	{
-		if (get_active_network_interface(state.wifi_iface_name,
-				sizeof(state.wifi_iface_name)) != 0)
-			perror(NTWRK_IFACE_ERR_MSG);
-	}
+	if (state.wifi_scan_on && init_ntwrk_ifaces(&state) != 0)
+		return (perror(NTWRK_IFACE_ERR_MSG), EXIT_FAILURE);
 	if (init_pthreads(&threads, &state) != 0)
 		perror(PTHREAD_ERR_MSG);
 	cleanup(&state, &threads);

@@ -121,11 +121,12 @@ typedef struct s_state
 	t_wifi_scan_dev_info			*wifi_scanned_devices;
 	t_cl_inquiry_dev_info			*cl_scanned_devices;
 	t_bt_hci_iface					*hci_ifaces;
+	t_ntwrk_iface					*ntwrk_ifaces;
+	int								num_ntwrk_ifaces;
 	int								cl_num_scanned_devices;
 	int								num_hci_devices;
 	int								wifi_num_scanned_devices;
 	bool							wifi_data_updated;
-	char							wifi_iface_name[16];
 	bool							wifi_scan_on;
 	int								le_num_scanned_devices;
 	pthread_mutex_t					le_data_mutex;
@@ -138,6 +139,7 @@ extern _Atomic bool g_terminate_flag;
 
 int									init_bluetooth_ifaces(t_state *s);
 void								init_signals(t_state *state);
+int									init_ntwrk_ifaces(t_state *state);
 int									le_add_scanned_dev_to_lst(t_state *s,
 										const bdaddr_t *bdaddr,
 										const char *mac_addr, int8_t rssi);
