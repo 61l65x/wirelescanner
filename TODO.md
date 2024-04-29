@@ -1,5 +1,4 @@
-- [ ] Get the cleaner code from the bludisturb for scanning 
-- [ ] Combine the hci job assigner here from the bludisturb
-- [ ] Add the ap_scanner 
-- [ ] Get the classic scanning also in here from bludisturb
-- [ ] Add cabapility to add more wifi adapters
+- [ ] Add wifi packet sniffer
+- [ ] Add bluetooth packet sniffer
+- [ ] separate to own processes 
+- [ ] Add simple gui with GTK C

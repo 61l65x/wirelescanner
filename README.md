@@ -8,7 +8,7 @@ Bluai is a C multi-threaded program designed to perform various Bluetooth-relate
 ## Bluetooth Scanning Capabilities
 
 - **BLE Scanning (Ready)**: Our scanner efficiently captures data from constantly advertising BLE devices, allowing for rapid collection of information without needing explicit inquiries.
-- **Bluetooth Classic (Not Included yet)**: Scanning for classic Bluetooth devices involves sending inquiry requests, which may result in a slightly slower data collection process compared to BLE.
+- **Bluetooth Classic (Ready)**: Scanning for classic Bluetooth devices involves sending inquiry requests, which may result in a slightly slower data collection process compared to BLE.
 
 
 ## Features

@@ -21,6 +21,19 @@ static int	init_pthreads(t_thread_ids *t, t_state *s)
 	return (0);
 }
 
+static int	init_processes(t_state *s)
+{
+	if (init_bluetooth_ifaces(s) != 0)
+	{
+		return (perror(BT_HCI_ERR_MSG), EXIT_FAILURE);
+	}
+	if (s->wifi_scan_on && init_ntwrk_ifaces(s) != 0)
+	{
+		return (perror(NTWRK_IFACE_ERR_MSG), EXIT_FAILURE);
+	}
+	return (0);
+}
+
 static int	handle_arguments(int ac, char **av, t_state *ctx)
 {
 	if (ac == 2 && !strcmp(av[1], "wifi"))
