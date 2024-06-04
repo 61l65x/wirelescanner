@@ -1,4 +1,4 @@
-#include "mainheader.h"
+#include "wirelescanner.h"
 
 // Function to send data as a POST request
 static int	send_wifi_data_post(CURL *curl, const t_wifi_scan_dev_info *device,
@@ -46,16 +46,16 @@ void	*wifi_senddata(void *arg)
 	while (!IS_TERMINATED())
 	{
 		pthread_mutex_lock(&ctx->wifi_data_mutex);
-		if (ctx->wifi_data_updated)
+		if (ctx->ntwrk_info.wifi_data_updated)
 		{
-			for (t_wifi_scan_dev_info *current = ctx->wifi_scanned_devices; current != NULL; current = current->next)
+			for (t_wifi_scan_dev_info *current = ctx->ntwrk_info.wifi_scanned_devices; current != NULL; current = current->next)
 			{
 				tempCopy = *current;
 				if (send_wifi_data_post(curl, &tempCopy, 1) < 0)
 					fprintf(stderr, "Failed to send data for device %s\n",
 						current->mac_addr);
 			}
-			ctx->wifi_data_updated = false;
+			ctx->ntwrk_info.wifi_data_updated = false;
 		}
 		pthread_mutex_unlock(&ctx->wifi_data_mutex);
 		usleep(100);

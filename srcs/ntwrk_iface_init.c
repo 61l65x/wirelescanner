@@ -1,7 +1,10 @@
 
-#include "mainheader.h"
+#include "ntwrk_header.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
-static int	get_wireless_interfaces(t_state *state)
+static int	get_wireless_interfaces(t_all_ntwrk_info *i)
 {
 	FILE			*fp;
 	char			line[256];
@@ -23,9 +26,9 @@ static int	get_wireless_interfaces(t_state *state)
 			if (last_interface != NULL)
 				last_interface->next = new_iface;
 			else
-				state->ntwrk_ifaces = new_iface;
+				i->ntwrk_ifaces = new_iface;
 			last_interface = new_iface;
-			state->num_ntwrk_ifaces++;
+			i->num_ntwrk_ifaces++;
 		}
 		else if (current_interface && strstr(line, "ifindex"))
 			sscanf(line, " ifindex %d", &current_interface->ifindex);
@@ -43,11 +46,11 @@ static int	get_wireless_interfaces(t_state *state)
 	return (pclose(fp), 0);
 }
 
-int	init_ntwrk_ifaces(t_state *state)
+int	init_ntwrk_ifaces(t_all_ntwrk_info *i)
 {
-	if (get_wireless_interfaces(state) != 0)
-		return (1);
-	for (t_ntwrk_iface *iface = state->ntwrk_ifaces; iface; iface = iface->next)
+	if (get_wireless_interfaces(i) != 0)
+		return (-1);
+	for (t_ntwrk_iface *iface = i->ntwrk_ifaces; iface; iface = iface->next)
 		printf("Interface: %s\n", iface->iface_name);
 	return (0);
 }

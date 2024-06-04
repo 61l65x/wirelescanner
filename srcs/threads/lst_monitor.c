@@ -1,4 +1,5 @@
-#include "mainheader.h"
+#include "wirelescanner.h"
+
 #define MINUTES_5 300000
 
 static bool	not_terminated_sleep(int check_interval)
@@ -14,7 +15,7 @@ static void	check_wifi_devices(t_state *s)
 	t_wifi_scan_dev_info	*current;
 	t_wifi_scan_dev_info	*next;
 
-	current = s->wifi_scanned_devices;
+	current = s->ntwrk_info.wifi_scanned_devices;
 	while (!IS_TERMINATED() && current != NULL)
 	{
 		if (current->seen_ms_ago > MINUTES_5)
@@ -36,7 +37,7 @@ static void	check_le_devices(t_state *s)
 	t_le_scan_dev_info	*le_next;
 	long long			current_ms;
 
-	le_current = s->le_scanned_devices;
+	le_current = s->bt_info.le_scanned_devices;
 	current_ms = timeval_to_ms();
 	while (!IS_TERMINATED() && le_current != NULL)
 	{
@@ -88,9 +89,9 @@ void	*lst_monitor_thread(void *arg)
 	s = (t_state *)arg;
 	while (not_terminated_sleep(5))
 	{
-		pthread_mutex_lock(&s->le_data_mutex);
+		pthread_mutex_lock(&s->bt_info.le_data_mutex);
 		check_le_devices(s);
-		pthread_mutex_unlock(&s->le_data_mutex);
+		pthread_mutex_unlock(&s->bt_info.le_data_mutex);
 		usleep(100);
 		pthread_mutex_lock(&s->wifi_data_mutex);
 		check_wifi_devices(s);

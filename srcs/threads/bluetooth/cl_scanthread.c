@@ -1,4 +1,4 @@
-#include "mainheader.h"
+#include "wirelescanner.h"
 #include "threadheader.h"
 
 int	cl_add_scanned_dev_to_lst(t_state *s, const bdaddr_t *bdaddr,
@@ -14,9 +14,9 @@ int	cl_add_scanned_dev_to_lst(t_state *s, const bdaddr_t *bdaddr,
 	memcpy(new_device->cod, cod, 3);
 	new_device->last_seen_time_ms = timeval_to_ms();
 	new_device->rssi = rssi;
-	new_device->next = s->cl_scanned_devices;
-	s->cl_scanned_devices = new_device;
-	s->cl_num_scanned_devices++;
+	new_device->next = s->bt_info.cl_scanned_devices;
+	s->bt_info.cl_scanned_devices = new_device;
+	s->bt_info.cl_num_scanned_devices++;
 	return (0);
 }
 
@@ -27,9 +27,9 @@ void	cl_update_add_dev(t_state *s, const bdaddr_t *bdaddr, uint8_t *cod,
 	char	mac_addr[19];
 
 	ba2str(bdaddr, mac_addr);
-	pthread_mutex_lock(&s->cl_data_mutex);
+	pthread_mutex_lock(&s->bt_info.cl_data_mutex);
 	device_found = false;
-	for (t_cl_inquiry_dev_info *current = s->cl_scanned_devices; current != NULL; current = current->next)
+	for (t_cl_inquiry_dev_info *current = s->bt_info.cl_scanned_devices; current != NULL; current = current->next)
 	{
 		if (strcmp(current->mac_addr, mac_addr) == 0)
 		{
@@ -45,7 +45,7 @@ void	cl_update_add_dev(t_state *s, const bdaddr_t *bdaddr, uint8_t *cod,
 		if (cl_add_scanned_dev_to_lst(s, bdaddr, mac_addr, cod, rssi) < 0)
 			SET_TERMINATE_FLAG();
 	}
-	pthread_mutex_unlock(&s->cl_data_mutex);
+	pthread_mutex_unlock(&s->bt_info.cl_data_mutex);
 }
 
 /* The reaction for the SIGINT can be little slow
@@ -69,7 +69,7 @@ void	*cl_scan_thread(void *arg)
 	for (int i = 0; i < 255; ++i)
 		ii_ptrs[i] = &ii[i];
 	s = (t_state *)arg;
-	hci = get_hci_for_job(s, HCI_JOB_SCAN_CLASSIC_DATA);
+	hci = get_hci_for_job(&s->bt_info, HCI_JOB_SCAN_CLASSIC_DATA);
 	if (!hci)
 		return (perror("get_hci_dev_for_job cl_scan_thread"), NULL);
 	printf("Starting classic scan controller %d\n", hci->sock_fd);

@@ -1,5 +1,5 @@
 
-#include "mainheader.h"
+#include "wirelescanner.h"
 #include "wifi_scan_api.h"
 #define MAX_BSS_ENTRIES 100
 
@@ -25,8 +25,8 @@ static int	wifi_add_device_lst(t_state *ctx, struct bss_info *bss)
 	// Assuming signal_mbm is in millibels and you want it in dB
 	new_device->frequency = (float)bss->frequency / 1000.0;
 	new_device->is_connected = bss->status == BSS_ASSOCIATED ? 1 : 0;
-	new_device->next = ctx->wifi_scanned_devices;
-	ctx->wifi_scanned_devices = new_device;
+	new_device->next = ctx->ntwrk_info.wifi_scanned_devices;
+	ctx->ntwrk_info.wifi_scanned_devices = new_device;
 	return (0);
 }
 
@@ -46,7 +46,7 @@ static int	add_update_wifi_device(t_state *ctx, struct bss_info *bss)
 	char					bssid_str[BSSID_STRING_LENGTH];
 	t_wifi_scan_dev_info	*current;
 
-	current = ctx->wifi_scanned_devices;
+	current = ctx->ntwrk_info.wifi_scanned_devices;
 	bssid_to_string(bss->bssid, bssid_str);
 	while (current != NULL)
 	{
@@ -67,10 +67,10 @@ void	*wifi_scan_thread(void *arg)
 	ctx = (t_state *)arg;
 	wifi = NULL;
 	int scan_count, i;
-	printf("wifi iface name is %s\n", ctx->ntwrk_ifaces->iface_name);
-	if (ctx == NULL || !ctx->ntwrk_ifaces)
+	printf("wifi iface name is %s\n", ctx->ntwrk_info.ntwrk_ifaces->iface_name);
+	if (ctx == NULL || !ctx->ntwrk_info.ntwrk_ifaces)
 		return (perror("wifi_iface is not initialized"), NULL);
-	if ((wifi = wifi_scan_init(ctx->ntwrk_ifaces->iface_name)) == NULL)
+	if ((wifi = wifi_scan_init(ctx->ntwrk_info.ntwrk_ifaces->iface_name)) == NULL)
 		return (perror("Failed to initialize wifi scan"), NULL);
 	while (!IS_TERMINATED())
 	{
@@ -91,7 +91,7 @@ void	*wifi_scan_thread(void *arg)
 						(float)bss[i].frequency / 1000.0,
 						bss[i].seen_ms_ago);
 			}
-			ctx->wifi_data_updated = true;
+			ctx->ntwrk_info.wifi_data_updated = true;
 			pthread_mutex_unlock(&ctx->wifi_data_mutex);
 		}
 		usleep(10);

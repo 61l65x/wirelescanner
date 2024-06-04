@@ -1,4 +1,4 @@
-#include "mainheader.h"
+#include "wirelescanner.h"
 #define _POSIX_C_SOURCE 200809L
 
 _Atomic bool g_terminate_flag = false;

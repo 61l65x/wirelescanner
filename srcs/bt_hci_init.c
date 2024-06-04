@@ -1,6 +1,10 @@
 
-#include "mainheader.h"
-#include "threadheader.h"
+#include "bt_header.h"
+#include <errno.h>
+#include <pthread.h>
+#include <stdlib.h>
+#include <sys/ioctl.h>
+#include <unistd.h>
 
 static bool	is_le_capable(struct hci_dev_info *di)
 {
@@ -30,7 +34,7 @@ static void	rfkill_unblock_bt(int sock_fd, int dev_id, bool *rfkill_attempted)
 	}
 }
 
-static void	check_hci_capabilities(t_state *s, struct hci_dev_info *di,
+static void	check_hci_capabilities(struct hci_dev_info *di,
 		t_bt_hci_iface *new_dev)
 {
 	new_dev->job_mask = 0;
@@ -41,13 +45,14 @@ static void	check_hci_capabilities(t_state *s, struct hci_dev_info *di,
 	new_dev->job_mask |= JOB_MASK_SEND_DATA;
 }
 
-static int	add_hci_dev_to_lst(t_state *s, struct hci_dev_info *di, int fd)
+static int	add_hci_dev_to_lst(t_all_bt_info *i, struct hci_dev_info *di,
+		int fd)
 {
 	t_bt_hci_iface	*new_dev;
 
 	new_dev = calloc(1, sizeof(t_bt_hci_iface));
 	if (!new_dev)
-		return (perror(ALLOC_ERR_MSG), -1);
+		return (perror(ERR_CALLOC_HCI), -1);
 	new_dev->dev_id = di->dev_id;
 	bacpy(&new_dev->bdaddr, &di->bdaddr);
 	ba2str(&di->bdaddr, new_dev->mac_addr);
@@ -55,12 +60,12 @@ static int	add_hci_dev_to_lst(t_state *s, struct hci_dev_info *di, int fd)
 		strcpy(new_dev->local_name, "[unknown]");
 	else
 		new_dev->local_name[sizeof(new_dev->local_name) - 1] = '\0';
-	check_hci_capabilities(s, di, new_dev);
+	check_hci_capabilities(di, new_dev);
 	new_dev->dev_id = di->dev_id;
 	new_dev->sock_fd = fd;
-	new_dev->next = s->hci_ifaces;
-	s->hci_ifaces = new_dev;
-	s->num_hci_devices++;
+	new_dev->next = i->hci_ifaces;
+	i->hci_ifaces = new_dev;
+	i->num_hci_devices++;
 	return (0);
 }
 static void	print_hci_flags(unsigned int flags)
@@ -85,7 +90,7 @@ static void	print_hci_flags(unsigned int flags)
 		printf("HCI_RAW is set\n");
 }
 
-t_bt_hci_iface	*get_hci_for_job(t_state *s, t_iface_job job)
+t_bt_hci_iface	*get_hci_for_job(t_all_bt_info *s, t_iface_job job)
 {
 	t_bt_hci_iface	*current_device;
 	const int		job_mask = (1 << job);
@@ -108,7 +113,7 @@ t_bt_hci_iface	*get_hci_for_job(t_state *s, t_iface_job job)
 	return (NULL);
 }
 
-int	init_bluetooth_ifaces(t_state *s)
+int	init_bluetooth_ifaces(t_all_bt_info *i)
 {
 	struct hci_dev_info	di;
 	bool				rfkill_attempted;
@@ -125,13 +130,12 @@ int	init_bluetooth_ifaces(t_state *s)
 		di.dev_id = dev_id;
 		any_device_found = true;
 		if (ioctl(sock_fd, HCIGETDEVINFO, &di) < OK)
-			return (perror(HCI_DEVINFO_ERR_MSG), close(sock_fd), clear_lst(s,
-					HCI_INFO), -1);
+			return (perror(HCI_DEVINFO_ERR_MSG), close(sock_fd), -1);
 		if (!(di.flags & HCI_UP) && !rfkill_attempted)
 			rfkill_unblock_bt(sock_fd, dev_id, &rfkill_attempted);
 		print_hci_flags(di.flags);
-		if (add_hci_dev_to_lst(s, &di, sock_fd) != OK)
-			return (clear_lst(s, HCI_INFO), FAIL);
+		if (add_hci_dev_to_lst(i, &di, sock_fd) != OK)
+			return (FAIL);
 	}
 	if (!any_device_found)
 		return (perror(BT_HCI_ERR_MSG), FAIL);

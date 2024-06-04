@@ -1,5 +1,5 @@
 
-#include "mainheader.h"
+#include "wirelescanner.h"
 
 #define EIR_NAME_SHORT 0x08    /* le shortened local name */
 #define EIR_NAME_COMPLETE 0x09 /* le complete local name */
@@ -16,9 +16,9 @@ int	le_add_scanned_dev_to_lst(t_state *s, const bdaddr_t *bdaddr,
 	strcpy(new_device->mac_addr, mac_addr);
 	new_device->last_seen_time_ms = timeval_to_ms();
 	new_device->rssi = rssi;
-	new_device->next = s->le_scanned_devices;
-	s->le_scanned_devices = new_device;
-	s->le_num_scanned_devices++;
+	new_device->next = s->bt_info.le_scanned_devices;
+	s->bt_info.le_scanned_devices = new_device;
+	s->bt_info.le_num_scanned_devices++;
 	return (0);
 }
 
@@ -28,9 +28,9 @@ void	le_update_add_dev(t_state *s, const bdaddr_t *bdaddr, int8_t rssi)
 	char	mac_addr[19];
 
 	ba2str(bdaddr, mac_addr);
-	pthread_mutex_lock(&s->le_data_mutex);
+	pthread_mutex_lock(&s->bt_info.le_data_mutex);
 	device_found = false;
-	for (t_le_scan_dev_info *current = s->le_scanned_devices; current != NULL; current = current->next)
+	for (t_le_scan_dev_info *current = s->bt_info.le_scanned_devices; current != NULL; current = current->next)
 	{
 		if (strcmp(current->mac_addr, mac_addr) == 0)
 		{
@@ -45,7 +45,7 @@ void	le_update_add_dev(t_state *s, const bdaddr_t *bdaddr, int8_t rssi)
 		if (le_add_scanned_dev_to_lst(s, bdaddr, mac_addr, rssi) < 0)
 			SET_TERMINATE_FLAG();
 	}
-	pthread_mutex_unlock(&s->le_data_mutex);
+	pthread_mutex_unlock(&s->bt_info.le_data_mutex);
 }
 
 void	print_device_info(const char *mac, int rssi, const uint8_t *data,
