@@ -35,7 +35,6 @@ static void	cleanup(t_state *ctx, t_thread_ids *threads)
 	pthread_join(threads->le_scan_id, NULL);
 	pthread_join(threads->lst_monitor_id, NULL);
 	pthread_join(threads->le_send_thread, NULL);
-	clear_lst(ctx, ALL_INFO);
 	pthread_mutex_destroy(&ctx->bt_info.le_data_mutex);
 	pthread_mutex_destroy(&ctx->bt_info.hci_data_mutex);
 	if (ctx->ntwrk_info.wifi_scan_on)
@@ -43,8 +42,8 @@ static void	cleanup(t_state *ctx, t_thread_ids *threads)
 		pthread_join(threads->wifi_send_id, NULL);
 		pthread_join(threads->wifi_scan_id, NULL);
 		pthread_mutex_destroy(&ctx->wifi_data_mutex);
-		clear_lst(ctx, WIFI_INFO);
 	}
+	clear_lst(ctx, ALL_INFO);
 }
 
 int	main(int ac, char **av)

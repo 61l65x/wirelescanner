@@ -19,7 +19,8 @@ static int	set_le_socket_opts(t_bt_hci_iface *hci_dev)
 		return (perror("fcntl set failed"), FAIL);
 	return (OK);
 }
-
+void	print_device_info(const char *mac, int rssi, const uint8_t *data,
+		size_t data_len);
 static void	scan_loop(t_state *s, t_bt_hci_iface *hci_dev)
 {
 	int8_t				rssi;
@@ -65,8 +66,8 @@ static void	scan_loop(t_state *s, t_bt_hci_iface *hci_dev)
 						sizeof(name));
 					printf("Device: %s, Name: %s, RSSI: %d dBm\n", macaddr,
 						name, rssi);
-					// print_device_info(macaddr, rssi, info->data,
-					//	info->length);
+					print_device_info(macaddr, rssi, info->data,
+					info->length);
 					le_update_add_dev(s, &info->bdaddr, rssi);
 					offset = (uint8_t *)offset + sizeof(le_advertising_info)
 						+ info->length + 1; // +1 for RSSI

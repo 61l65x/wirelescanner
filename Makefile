@@ -1,8 +1,8 @@
 NAME=wirelescanner
 CFLAGS = -Wall -g -O2 #-fsanitize=address  -fsanitize=leak
-LIBS = `pkg-config --cflags libcurl --libs libcurl bluez` -lbluetooth -lpthread -lmnl
-INCLUDES = -I./includes -I./apis/wifiscan
-SRCS = $(shell find srcs -name "*.c" && find apis -name "*.c")
+LIBS = `pkg-config --cflags libcurl --libs libcurl bluez` -lbluetooth -lpthread -lmnl -lyaml
+INCLUDES = -I./includes -I./dependencies/wifiscan
+SRCS = $(shell find srcs -name "*.c" && find dependencies/wifiscan -name "*.c")
 OBJS = $(SRCS:.c=.o)
 
 all: $(NAME)
