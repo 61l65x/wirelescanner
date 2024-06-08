@@ -2,6 +2,7 @@
 # define WIRELESCANNER_H
 
 # include "bt_header.h"
+# include "le_adv_data.h"
 # include "messages.h"
 # include "ntwrk_header.h"
 # include "threadheader.h"
@@ -34,33 +35,35 @@ typedef enum e_structtype
 	CL_INFO,
 	ALL_INFO,
 	WIFI_INFO,
-}						t_structype;
+}								t_structype;
 
 typedef struct s_state
 {
-	t_all_ntwrk_info	ntwrk_info;
-	t_all_bt_info		bt_info;
-	pthread_mutex_t		wifi_data_mutex;
-}						t_state;
+	t_all_ntwrk_info			ntwrk_info;
+	t_all_bt_info				bt_info;
+	t_le_adv_data_repository	le_adv_repo;
+	pthread_mutex_t				wifi_data_mutex;
+}								t_state;
 
-int						init_bluetooth_ifaces(t_all_bt_info *i);
-void					init_signals(t_state *state);
-int						init_ntwrk_ifaces(t_all_ntwrk_info *i);
-int						le_add_scanned_dev_to_lst(t_state *s,
-							const bdaddr_t *bdaddr, const char *mac_addr,
-							int8_t rssi);
-void					remove_from_lst(t_state *ctx, void *device_to_remove,
-							t_structype type);
-void					clear_lst(t_state *ctx, t_structype type);
-void					le_update_add_dev(t_state *s, const bdaddr_t *bdaddr,
-							int8_t rssi);
-long long				timeval_to_ms(void);
-int						get_active_network_interface(char *buffer,
-							size_t buffer_size);
-const char				*bssid_to_string(const uint8_t bssid[BSSID_LENGTH],
-							char bssid_string[BSSID_STRING_LENGTH]);
-void					eir_parse_name(uint8_t *eir, size_t eir_len, char *buf,
-							size_t buf_len);
-t_bt_hci_iface			*get_hci_for_job(t_all_bt_info *s, t_iface_job job);
+int								init_bluetooth_ifaces(t_all_bt_info *i);
+void							init_signals(t_state *state);
+int								init_ntwrk_ifaces(t_all_ntwrk_info *i);
+int								le_add_scanned_dev_to_lst(t_state *s,
+									const bdaddr_t *bdaddr,
+									const char *mac_addr, int8_t rssi);
+void							remove_from_lst(t_state *ctx,
+									void *device_to_remove, t_structype type);
+void							clear_lst(t_state *ctx, t_structype type);
+void							le_update_add_dev(t_state *s,
+									const bdaddr_t *bdaddr, int8_t rssi);
+long long						timeval_to_ms(void);
+int								get_active_network_interface(char *buffer,
+									size_t buffer_size);
+const char						*bssid_to_string(const uint8_t bssid[BSSID_LENGTH],
+									char bssid_string[BSSID_STRING_LENGTH]);
+void							eir_parse_name(uint8_t *eir, size_t eir_len,
+									char *buf, size_t buf_len);
+t_bt_hci_iface					*get_hci_for_job(t_all_bt_info *s,
+									t_iface_job job);
 
 #endif

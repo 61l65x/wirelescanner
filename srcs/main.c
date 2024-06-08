@@ -1,6 +1,6 @@
 #include "wirelescanner.h"
 
-static int	init_pthreads(t_thread_ids *t, t_state *s)
+static int	init_top_pthreads(t_thread_ids *t, t_state *s)
 {
 	if (pthread_mutex_init(&s->bt_info.le_data_mutex, NULL) != 0
 		|| pthread_mutex_init(&s->bt_info.hci_data_mutex, NULL) != 0
@@ -46,6 +46,7 @@ static void	cleanup(t_state *ctx, t_thread_ids *threads)
 	clear_lst(ctx, ALL_INFO);
 }
 
+void	prepare_all(t_state *state);
 int	main(int ac, char **av)
 {
 	t_state			state;
@@ -56,17 +57,8 @@ int	main(int ac, char **av)
 	printf("Run as a root !\n");
 	init_signals(&state);
 	handle_arguments(ac, av, &state.ntwrk_info);
-	if (init_bluetooth_ifaces(&state.bt_info) != 0)
-	{
-		return (perror(BT_HCI_ERR_MSG), clear_lst(&state, HCI_INFO),
-			EXIT_FAILURE);
-	}
-	if (state.ntwrk_info.wifi_scan_on
-		&& init_ntwrk_ifaces(&state.ntwrk_info) != 0)
-	{
-		return (perror(NTWRK_IFACE_ERR_MSG), clear_lst(&state, ALL_INFO), EXIT_FAILURE);
-	}
-	if (init_pthreads(&threads, &state) != 0)
+	prepare_all(&state);
+	if (init_top_pthreads(&threads, &state) != 0)
 	{
 		perror(PTHREAD_ERR_MSG);
 	}
