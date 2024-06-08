@@ -45,9 +45,7 @@ typedef struct s_state
 	pthread_mutex_t				wifi_data_mutex;
 }								t_state;
 
-int								init_bluetooth_ifaces(t_all_bt_info *i);
 void							init_signals(t_state *state);
-int								init_ntwrk_ifaces(t_all_ntwrk_info *i);
 int								le_add_scanned_dev_to_lst(t_state *s,
 									const bdaddr_t *bdaddr,
 									const char *mac_addr, int8_t rssi);
@@ -65,5 +63,5 @@ void							eir_parse_name(uint8_t *eir, size_t eir_len,
 									char *buf, size_t buf_len);
 t_bt_hci_iface					*get_hci_for_job(t_all_bt_info *s,
 									t_iface_job job);
-
+void							free_exit(const char *err_msg, t_state *state);
 #endif

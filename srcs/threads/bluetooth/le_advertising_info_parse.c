@@ -103,12 +103,17 @@ void print_device_info(const char *mac, int rssi, const uint8_t *data, size_t da
         printf("%02x ", data[i]);
     }
     printf("\n");
+    
     index = 0;
     while (index < data_len) {
         field_len = data[index];
-        if (field_len == 0 || index + field_len >= data_len)
+        if (field_len == 0 || index + field_len >= data_len) {
             break;
+        }
         field_type = data[index + 1];
+        
+        printf("Field Length: %d, Field Type: 0x%02x\n", field_len, field_type); // Debug info
+
         switch (field_type) {
             case 0x09: // Complete Local Name
             case 0x08: // Shortened Local Name
@@ -120,11 +125,22 @@ void print_device_info(const char *mac, int rssi, const uint8_t *data, size_t da
                     printf("Manufacturer ID: %04x\n", manufacturer_id);
                     CompanyIdentifier company = get_company_identifier(manufacturer_id);
                     printf("Manufacturer Name: %s\n", company.name ? company.name : "Unknown");
-                    // You can print other company identifier information here
                     free(company.name);
                 }
                 break;
+            case 0x0D: // Class of Device
+                printf("CLASS OF DEV FOUND\n");
+                if (field_len >= 4) {
+                    uint32_t class_of_device = (data[index + 2] << 16) | (data[index + 3] << 8) | data[index + 4];
+                    printf("Class of Device: 0x%06x\n", class_of_device);
+                } else {
+                    printf("Invalid Class of Device field length: %d\n", field_len);
+                }
+                break;
             // Handle other field types if needed
+            default:
+                printf("Unhandled field type: 0x%02x\n", field_type);
+                break;
         }
         index += field_len + 1;
     }

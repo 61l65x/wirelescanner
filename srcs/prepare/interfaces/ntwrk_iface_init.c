@@ -13,7 +13,7 @@ static int	get_wireless_interfaces(t_all_ntwrk_info *i)
 	t_ntwrk_iface	*new_iface;
 
 	if ((fp = popen("iw dev", "r")) == NULL)
-		return (perror("popen failure"), -1);
+		return (-1);
 	current_interface = NULL;
 	last_interface = NULL;
 	while (fgets(line, sizeof(line), fp) != NULL)
@@ -21,7 +21,7 @@ static int	get_wireless_interfaces(t_all_ntwrk_info *i)
 		if (strstr(line, "Interface"))
 		{
 			if ((new_iface = calloc(1, sizeof(t_ntwrk_iface))) == NULL)
-				return (perror("malloc failure"), -1);
+				return (pclose(fp), -1);
 			sscanf(line, " Interface %s", new_iface->iface_name);
 			if (last_interface != NULL)
 				last_interface->next = new_iface;

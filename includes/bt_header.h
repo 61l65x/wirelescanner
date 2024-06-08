@@ -10,16 +10,6 @@
 # include <stdbool.h>
 # include <sys/ioctl.h>
 
-# define HCI_DEVINFO_ERR_MSG "Failed to get HCI device info\n"
-# define BT_HCI_ERR_MSG \
-	"Did not find any Bluetooth adapter\n Please make sure your \
-Bluetooth adapter is plugged in.\n\
-Or the adapter is not compatible with linux systems\n"
-# define RFKILL_ERR_MSG "Bluetooth is RF-killed. Attempting to unblock...\n"
-# define RFKILL_UNBLOCK_ERR_MSG "Failed to unblock Bluetooth via rfkill.\n"
-# define RFKILL_UNBLOCK_SUCCESS_MSG "Bluetooth unblocked successfully. Please wait...\n"
-# define BT_UP_ALRDY "Failed to turn on the HCI device"
-# define ERR_CALLOC_HCI "Failed to allocate memory for HCI device\n"
 # define MAX_HCI_DEVICES 16
 # define JOB_MASK_SEND_DATA (1 << HCI_JOB_SEND_DATA)
 # define JOB_MASK_SCAN_LE_DATA (1 << HCI_JOB_SCAN_LE_DATA)

@@ -46,7 +46,8 @@ static void	join_and_clean(t_state *ctx, t_thread_ids *threads)
 	clear_lst(ctx, ALL_INFO);
 }
 
-void	prepare_all(t_state *state);
+void		prepare_all(t_state *state);
+
 int	main(int ac, char **av)
 {
 	t_state			state;

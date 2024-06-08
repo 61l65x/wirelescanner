@@ -52,7 +52,7 @@ static int	add_hci_dev_to_lst(t_all_bt_info *i, struct hci_dev_info *di,
 
 	new_dev = calloc(1, sizeof(t_bt_hci_iface));
 	if (!new_dev)
-		return (perror(ERR_CALLOC_HCI), -1);
+		return (-1);
 	new_dev->dev_id = di->dev_id;
 	bacpy(&new_dev->bdaddr, &di->bdaddr);
 	ba2str(&di->bdaddr, new_dev->mac_addr);
@@ -90,6 +90,7 @@ static void	print_hci_flags(unsigned int flags)
 		printf("HCI_RAW is set\n");
 }
 
+// used in threads to get the hci device for the job
 t_bt_hci_iface	*get_hci_for_job(t_all_bt_info *s, t_iface_job job)
 {
 	t_bt_hci_iface	*current_device;
@@ -130,7 +131,7 @@ int	init_bluetooth_ifaces(t_all_bt_info *i)
 		di.dev_id = dev_id;
 		any_device_found = true;
 		if (ioctl(sock_fd, HCIGETDEVINFO, &di) < OK)
-			return (perror(HCI_DEVINFO_ERR_MSG), close(sock_fd), -1);
+			return (close(sock_fd), -1);
 		if (!(di.flags & HCI_UP) && !rfkill_attempted)
 			rfkill_unblock_bt(sock_fd, dev_id, &rfkill_attempted);
 		print_hci_flags(di.flags);
@@ -138,6 +139,6 @@ int	init_bluetooth_ifaces(t_all_bt_info *i)
 			return (FAIL);
 	}
 	if (!any_device_found)
-		return (perror(BT_HCI_ERR_MSG), FAIL);
+		return (FAIL);
 	return (0);
 }
