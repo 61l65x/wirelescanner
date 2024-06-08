@@ -30,7 +30,7 @@ static int	handle_arguments(int ac, char **av, t_all_ntwrk_info *i)
 	return (0);
 }
 
-static void	cleanup(t_state *ctx, t_thread_ids *threads)
+static void	join_and_clean(t_state *ctx, t_thread_ids *threads)
 {
 	pthread_join(threads->le_scan_id, NULL);
 	pthread_join(threads->lst_monitor_id, NULL);
@@ -62,6 +62,6 @@ int	main(int ac, char **av)
 	{
 		perror(PTHREAD_ERR_MSG);
 	}
-	cleanup(&state, &threads);
+	join_and_clean(&state, &threads);
 	return (0);
 }

@@ -16,7 +16,7 @@ void remove_from_lst(t_state *s, void *to_remove, t_structype type)
         case CL_INFO: head = (void **)&s->bt_info.cl_scanned_devices; count = &s->bt_info.cl_num_scanned_devices; break;
         case HCI_INFO: head = (void **)&s->bt_info.hci_ifaces; count = &s->bt_info.num_hci_devices; break;
         case WIFI_INFO: head = (void **)&s->ntwrk_info.wifi_scanned_devices; count = &s->ntwrk_info.wifi_num_scanned_devices; break;
-        case NTWRK_INFO: return;
+        case NTWRK_INFO: head = (void **)&s->ntwrk_info.ntwrk_ifaces; count = &s->ntwrk_info.num_ntwrk_ifaces; break;
         default: return;
     }
 
@@ -85,5 +85,17 @@ void	clear_lst(t_state *s, t_structype type)
 		}
 		s->ntwrk_info.wifi_scanned_devices = NULL;
 		s->ntwrk_info.wifi_num_scanned_devices = 0;
+	}
+	if (type == NTWRK_INFO || type == ALL_INFO)
+	{
+		for (t_ntwrk_iface *current = s->ntwrk_info.ntwrk_ifaces,
+			*next; current != NULL; current = next)
+		{
+			next = current->next;
+			free(current);
+			current = NULL;
+		}
+		s->ntwrk_info.ntwrk_ifaces = NULL;
+		s->ntwrk_info.num_ntwrk_ifaces = 0;
 	}
 }
