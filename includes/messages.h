@@ -29,6 +29,7 @@ Or the adapter is not compatible with linux systems\n"
 // LE ADV PARSING ERRORS
 # define ERR_PARSE_MANUFACTURER "LE Failed to parse manufacturer data\n"
 # define ERR_PARSE_CLASS_OF_DEVICE "LE Failed to parse class of device\n"
+# define ERR_PARSE_TOP_LVL "LE Failed to parse top level ad_types data\n"
 
 // Colors
 # define C_RED "\x1b[31m"

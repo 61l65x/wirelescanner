@@ -1,6 +1,7 @@
 # Wirelescanner
-## Works on the raspberrys to !
-Bluai is a C multi-threaded program designed to perform various Bluetooth-related tasks concurrently. It's divided into three main threads:
+
+
+Bluai is a C multi-threaded program designed to perform various Bluetooth-related tasks concurrently. It's divided into three main threads for now more coming!
 
 + Arguments "wifi" to turn wifi scan on!
 + Default the wifi scan is off only scans bluetoothdevices
