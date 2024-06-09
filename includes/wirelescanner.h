@@ -20,6 +20,7 @@
 # include <sys/socket.h>
 # include <sys/time.h>
 # include <unistd.h>
+#include "ble_parser.h"
 
 # define IS_TERMINATED() atomic_load(&g_terminate_flag)
 # define SET_TERMINATE_FLAG() atomic_store(&g_terminate_flag, true)

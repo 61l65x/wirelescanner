@@ -1,3 +1,6 @@
 [submodule "dependencies/libbleparser"]
 	path = dependencies/libbleparser
 	url = git@github.com:61l65x/libbleparser.git
+[submodule "dependencies/libyaml"]
+	path = dependencies/libyaml
+	url = https://github.com/yaml/libyaml.git

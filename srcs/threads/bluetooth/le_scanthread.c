@@ -33,6 +33,7 @@ static void	scan_loop(t_state *s, t_bt_hci_iface *hci_dev)
 	char				macaddr[18];
 	char				name[248];
 
+	//t_ble_parser	*ble_parser = init_ble_parser();
 	while (!IS_TERMINATED())
 	{
 		bytes_read = read(hci_dev->sock_fd, buf, sizeof(buf));
@@ -66,8 +67,7 @@ static void	scan_loop(t_state *s, t_bt_hci_iface *hci_dev)
 						sizeof(name));
 					printf("Device: %s, Name: %s, RSSI: %d dBm\n", macaddr,
 						name, rssi);
-					print_device_info(macaddr, rssi, info->data,
-					info->length);
+					//print_adv_data_readable(ble_parser, info->data, info->length);
 					le_update_add_dev(s, &info->bdaddr, rssi);
 					offset = (uint8_t *)offset + sizeof(le_advertising_info)
 						+ info->length + 1; // +1 for RSSI
@@ -76,6 +76,7 @@ static void	scan_loop(t_state *s, t_bt_hci_iface *hci_dev)
 			}
 		}
 	}
+	//destroy_ble_parser(ble_parser);
 	printf("Leaving scan loop le \n");
 }
 
