@@ -1,0 +1,3 @@
+[submodule "dependencies/libbleparser"]
+	path = dependencies/libbleparser
+	url = git@github.com:61l65x/libbleparser.git
