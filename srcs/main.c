@@ -56,6 +56,14 @@ int	main(int ac, char **av)
 	state = (t_state){0};
 	threads = (t_thread_ids){0};
 	printf("Run as a root !\n");
+	state.bleparse = init_ble_parser();
+	if (state.bleparse == NULL)
+	{
+		return (1);
+	}
+	//print_manufacturer_tree(bleparse->repo.implemented_ad_types.root);
+	//print_class_of_device(&bleparse->repo.implemented_ad_types.cod);
+
 	init_signals(&state);
 	handle_arguments(ac, av, &state.ntwrk_info);
 	prepare_all(&state);

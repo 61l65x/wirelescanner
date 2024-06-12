@@ -1,8 +1,7 @@
 NAME = wirelescanner
 PATH_LIBBLEPARSE = dependencies/libbleparser
-#PATH_LIBYAML = dependencies/libyaml
 
-LD_BLEPARSE_PATH = -L$(PATH_LIBBLEPARSE)/build -lbleparser
+LD_BLEPARSE_PATH = -L./$(PATH_LIBBLEPARSE)/build -lbleparser
 CFLAGS = -Wall -g -O2
 LIBS = `pkg-config --cflags libcurl --libs libcurl bluez` -lbluetooth -lpthread -lmnl -lyaml $(LD_BLEPARSE_PATH)
 INCLUDES = -I./includes -I./dependencies/wifiscan -I$(PATH_LIBBLEPARSE)/includes
@@ -13,10 +12,10 @@ all: dependencies $(NAME)
 
 %.o: %.c
 	@echo "\033[0;34mCompiling... $<\033[0m"
-	@gcc $(CFLAGS) $(INCLUDES) -c -o $@ $<
+	@cc $(CFLAGS) $(INCLUDES) -c -o $@ $<
 
 $(NAME): $(OBJS)
-	@gcc $(CFLAGS) -o $@ $^ $(LIBS)
+	@cc $(CFLAGS) -o $@ $^ $(LIBS)
 	@echo "\033[0;32mDone. Run 'make help' for all rules! 📡🌐\033[0m"
 
 dependencies: libbleparser
@@ -25,9 +24,13 @@ libbleparser:
 	@echo "\033[0;32mBuilding libbleparser...\033[0m"
 	@make -C $(PATH_LIBBLEPARSE)
 
+test:
+	$(CC) $(CFLAGS) -g $(INCLUDES) -o test tests/test.c $(LD_BLEPARSE_PATH) -lyaml
+
 clean:
 	@echo "\033[0;31mCleaning...\033[0m"
 	@rm -f $(NAME) $(OBJS)
+	@rm -rf tests/*.o test
 	@make -C $(PATH_LIBBLEPARSE) clean
 
 fclean:

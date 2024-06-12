@@ -42,6 +42,7 @@ typedef struct s_state
 	t_all_ntwrk_info	ntwrk_info;
 	t_all_bt_info		bt_info;
 	pthread_mutex_t		wifi_data_mutex;
+	t_ble_parser		*bleparse;
 }						t_state;
 
 void					init_signals(t_state *state);

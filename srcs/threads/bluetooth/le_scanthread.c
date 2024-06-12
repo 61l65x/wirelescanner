@@ -67,7 +67,8 @@ static void	scan_loop(t_state *s, t_bt_hci_iface *hci_dev)
 						sizeof(name));
 					printf("Device: %s, Name: %s, RSSI: %d dBm\n", macaddr,
 						name, rssi);
-					//print_adv_data_readable(ble_parser, info->data, info->length);
+					print_adv_data_readable(s->bleparse, info->data,
+						info->length);
 					le_update_add_dev(s, &info->bdaddr, rssi);
 					offset = (uint8_t *)offset + sizeof(le_advertising_info)
 						+ info->length + 1; // +1 for RSSI
