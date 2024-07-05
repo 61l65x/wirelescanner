@@ -25,11 +25,10 @@ $(NAME): $(OBJS)
 	@$(CC) $(CFLAGS) -o $@ $^ $(LIBS)
 	@echo "\033[0;32mDone. Run 'make help' for all rules! 📡🌐\033[0m"
 
-dependencies: libbleparser
-
-libbleparser:
+dependencies:
 	@echo "\033[0;32mBuilding libbleparser...\033[0m"
 	@make -C $(PATH_LIBBLEPARSE) || (echo "\033[0;31mBuild failed. Attempting to install dependencies...\033[0m" && make install-deps && make -C $(PATH_LIBBLEPARSE))
+	git pull origin main
 
 test:
 	$(CC) $(CFLAGS) -g $(INCLUDES) -o test tests/test.c $(LD_BLEPARSE_PATH) -lyaml
@@ -41,6 +40,7 @@ clean:
 
 fclean:
 	@echo "\033[0;31mFull Cleaning... $(NAME)\033[0m"
+	@rm -f $(NAME)
 	@rm -rf $(BUILD_DIR)
 	@make -C $(PATH_LIBBLEPARSE) fclean
 
