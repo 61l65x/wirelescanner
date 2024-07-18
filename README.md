@@ -70,3 +70,6 @@ Provide usage examples and command-line options for your program here.
 ```shell
 $ make all      # Builds the executable 
 $ make clean    # Cleans the project 
+```
+
+
