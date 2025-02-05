@@ -1,47 +1,47 @@
-# Wirelescanner
+# Wirelesscanner
+
+**Wirelesscanner** is a multi-threaded C program that scans Bluetooth and WiFi devices. It collects data from all nearby wireless devices by utilizing **all Bluetooth and WiFi interfaces** connected to the scanning device. This means the more interfaces available (Bluetooth or WiFi) and the more processing power your device has, the more data can be gathered, resulting in more powerful scanning capabilities and use cases.
+
+- **Multi-threaded**: Handles Bluetooth and WiFi scanning simultaneously.
+- **Device Compatibility**: Runs on any C-capable device (e.g., Raspberry Pi Zero).
+- **Data Collection**: Gathers data from all nearby Bluetooth and WiFi devices using every available interface connected to the scanning device.
+- **Data Transmission**: Sends collected data to a server.
+- **ESP Implementation**: BLE device scanning on supported ESP boards (`platformio.ini`).
 
 
-Bluai is a C multi-threaded program designed to perform various Bluetooth-related tasks concurrently. It's divided into three main threads for now more coming!
 
-+ Arguments "wifi" to turn wifi scan on!
-+ Default the wifi scan is off only scans bluetoothdevices
+## WiFi Scanning
++ Arguments `"wifi"` to turn WiFi scan on!
++ Default: WiFi scan is off; only Bluetooth devices are scanned.
+
+---
 
 ## Bluetooth Scanning Capabilities
-
-- **BLE Scanning (Ready)**: Our scanner efficiently captures data from constantly advertising BLE devices, allowing for rapid collection of information without needing explicit inquiries.
-- **Bluetooth Classic (Ready)**: Scanning for classic Bluetooth devices involves sending inquiry requests, which may result in a slightly slower data collection process compared to BLE.
-
+- **BLE Scanning (Ready)**: Efficiently captures data from constantly advertising BLE devices, allowing rapid collection without explicit inquiries.
+- **Bluetooth Classic (Ready)**: Scans classic Bluetooth devices using inquiry requests, which may result in slightly slower data collection compared to BLE.
 
 ## Features
 
 ### Thread 1: Bluetooth Device Scanner
+- Scans and collects data from nearby Bluetooth devices.
+- Continuously updates device information.
 
-- This thread is responsible for scanning and collecting data from all nearby Bluetooth devices.
-- It continuously scans for devices and updates the collected information.
+### Thread 2: WiFi Device Scanner
+- Monitors WiFi signal strength using a small C/C++ library.
+- Collects data from:
+  - Associated station only (rapidly, connected).
+  - All networks around (slow passive scan).
+- Continuously scans and updates collected data.
 
-### Thread 2: Wifi Device Scanner
-
-wifi-scan small C/C++ library for monitoring signal strength of WiFi networks. It can collect data from:
-- associated station only (rapidly) (Connected)
-- all networks around (slow passive scan)
-
-- This thread is resbonsible for scanning and collecting data from all nearby networks
-- it continuosly passive scans nearby networks for networks & updates collected data
-
-### Thread 3: Dynamic Linked List of Devices Maintenance
-
-- This thread ensures that the dynamic linked list containing device information is kept clean.
-- Devices that have not been seen for a certain period are removed from the list to prevent data clutter.
+### Thread 3: Dynamic Linked List Maintenance
+- Manages a dynamic linked list of devices.
+- Removes devices not seen for a certain period to prevent data clutter.
 
 ### Thread 4: Data Transmission to Server
-
-- The third thread is responsible for sending collected data to a remote server.
-- It constructs POST requests and sends data to the specified server endpoint.
+- Sends collected data to a remote server via HTTP POST requests.
 
 ## Prerequisites
-
-Before running Bluai, make sure you have the following prerequisites:
-
+Before running Wirelesscanner, ensure you have:
 - C Compiler
 - Libcurl (for HTTP communication)
 - Bluetooth hardware support
@@ -49,27 +49,34 @@ Before running Bluai, make sure you have the following prerequisites:
 
 ## Building and Running
 
-To build and run Bluai, follow these steps:
+To build and run **Wirelesscanner**, follow these steps:
 
-1. [Instructions for building your program]
+1. Build the program:
 
-2. [Instructions for running your program]
+```shell
+make all
+```
 
-## Configuration
+2. Run the program:
 
-Bluai can be configured via a configuration file or command-line arguments. Here are some common configuration options:
+```shell
+./wirelesscanner
+```
 
-- [Option 1]
-- [Option 2]
-- [Option 3]
+For more details on the build process and customization, check the **Makefile**.
+
+---
 
 ## Usage
 
-Provide usage examples and command-line options for your program here.
+To clean or rebuild the project, use:
 
 ```shell
-$ make all      # Builds the executable 
-$ make clean    # Cleans the project 
+make clean    # Clean build files
+make re       # Clean and rebuild
 ```
 
 
+## License
+
+This project is licensed under the MIT License. You are free to use, modify, and distribute it, but cannot hold the authors liable for any issues. See the [LICENSE](assets/LICENSE) file for more details.
